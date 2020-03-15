@@ -1,3 +1,4 @@
+/* eslint-disable promise/catch-or-return */
 /* eslint-disable promise/always-return */
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
@@ -15,56 +16,52 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
+exports.updateHistory = functions
+  .region("europe-west2")
+  .firestore.document("latestValues/{country}")
+  .onUpdate((change, context) => {
+    let newValue = change.after.data();
+    newValue.time = admin.firestore.FieldValue.serverTimestamp();
+    newValue.country = change.before.id;
+    db.collection("history")
+      .doc()
+      .set({
+        newValue
+      });
+  });
+
+//exports.scrapeAndUpdateData = functions.https.onRequest(async (req, res) => {
 exports.scrapeAndUpdateData = async (pubSubEvent, context) => {
   const tableData = await fetchData();
-  const countriesData = constructCountryInfo(tableData);
-  const timeStamp = admin.firestore.FieldValue.serverTimestamp();
+  const countriesData = await constructCountryInfo(tableData);
 
   countriesData.forEach(info => {
-    var docRef = db.collection("latestValues").doc(info["country"]);
-    var docRefHistory = db.collection("history").doc();
+    const docRef = db.collection("latestValues").doc(info["country"]);
 
     docRef
-      .get()
-      .then(doc => {
-        if (
-          !doc.exists ||
-          doc.data.cases !== info["cases"] ||
-          doc.data.critical !== info["critical"] ||
-          doc.data.recovered !== info["recovered"] ||
-          doc.data.deaths !== info["deaths"]
-        ) {
-          docRefHistory.set({
-            country: info["country"],
-            cases: info["cases"],
-            critical: info["critical"],
-            recovered: info["recovered"],
-            deaths: info["deaths"],
-            time: timeStamp
-          });
-        }
-      })
-      .catch(error => {
-        console.error(error);
-        axios.post(errorHook, {
-          username: "HistoryUpdateFailure",
-          content: `Could not update history value for country ${info["country"]}, error: ${error}`
-        });
-      });
-
-    docRef.set(
-      {
+      .update({
         cases: info["cases"],
         critical: info["critical"],
         recovered: info["recovered"],
         deaths: info["deaths"]
-      },
-      { merge: true }
-    );
+      })
+      .catch(error => {
+        docRef.set({
+          cases: info["cases"],
+          critical: info["critical"],
+          recovered: info["recovered"],
+          deaths: info["deaths"]
+        });
+      });
   });
+
+  /* res.send({
+    fullList: countriesData
+  });
+});*/
 };
 
-const constructCountryInfo = tableData => {
+const constructCountryInfo = async tableData => {
   const totalCountries = [];
   const totalCases = [];
   const totalDeath = [];
@@ -81,7 +78,7 @@ const constructCountryInfo = tableData => {
         for (index = 1; index < column.length; index++) {
           const country = column[index];
           if (country in countries) {
-            totalCountries.push(country);
+            totalCountries.push(countries[country]);
           } else {
             excludedCountries.push(index);
             excludeCountriesNames.push(country);
@@ -138,7 +135,7 @@ const constructCountryInfo = tableData => {
   }
 
   if (excludeCountriesNames.length !== 0) {
-    axios.post(webhookUrl, {
+    await axios.post(webhookUrl, {
       username: "New countries with corona",
       content: `These countries have not been added for translation: ${excludeCountriesNames.toString()}`
     });
@@ -155,6 +152,10 @@ const fetchData = async () => {
 };
 
 const countries = {
+  CAR: "CAR",
+  Guam: "Guam",
+  Uzbekistan: "Uzbekistan",
+  "Equatorial Guinea": "Equatorial Guinea",
   Seychelles: "Seychelles",
   Mayotte: "Mayotte",
   "Total:": "Total",
