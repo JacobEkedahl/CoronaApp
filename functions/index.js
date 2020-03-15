@@ -20,18 +20,29 @@ exports.updateHistory = functions
   .region("europe-west2")
   .firestore.document("latestValues/{country}")
   .onUpdate((change, context) => {
-    let newValue = change.after.data();
-    newValue.time = admin.firestore.FieldValue.serverTimestamp();
-    newValue.country = change.before.id;
-    db.collection("history")
+    const newValue = change.after.data();
+
+    return db
+      .collection("history")
       .doc()
       .set({
-        newValue
+        cases: newValue.cases,
+        critical: newValue.critical,
+        recovered: newValue.recovered,
+        deaths: newValue.deaths,
+        time: admin.firestore.FieldValue.serverTimestamp(),
+        country: change.before.id
+      })
+      .then(_ => {
+        return "Update succeeded";
+      })
+      .catch(error => {
+        return "Update failed" + error;
       });
   });
 
-//exports.scrapeAndUpdateData = functions.https.onRequest(async (req, res) => {
-exports.scrapeAndUpdateData = async (pubSubEvent, context) => {
+exports.scrapeAndUpdateData = functions.https.onRequest(async (req, res) => {
+  //exports.scrapeAndUpdateData = async (pubSubEvent, context) => {
   const tableData = await fetchData();
   const countriesData = await constructCountryInfo(tableData);
 
@@ -46,20 +57,31 @@ exports.scrapeAndUpdateData = async (pubSubEvent, context) => {
         deaths: info["deaths"]
       })
       .catch(error => {
+        console.log("Creating new data for country: " + info["country"]);
         docRef.set({
           cases: info["cases"],
           critical: info["critical"],
           recovered: info["recovered"],
           deaths: info["deaths"]
         });
+
+        db.collection("history")
+          .doc()
+          .set({
+            cases: info["cases"],
+            critical: info["critical"],
+            recovered: info["recovered"],
+            deaths: info["deaths"],
+            time: admin.firestore.FieldValue.serverTimestamp(),
+            country: info["country"]
+          });
       });
   });
 
-  /* res.send({
+  res.send({
     fullList: countriesData
   });
-});*/
-};
+});
 
 const constructCountryInfo = async tableData => {
   const totalCountries = [];
