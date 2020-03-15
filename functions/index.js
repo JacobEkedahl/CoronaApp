@@ -41,47 +41,39 @@ exports.updateHistory = functions
       });
   });
 
-exports.scrapeAndUpdateData = functions.https.onRequest(async (req, res) => {
-  //exports.scrapeAndUpdateData = async (pubSubEvent, context) => {
+//exports.scrapeAndUpdateData = functions.https.onRequest(async (req, res) => {
+exports.scrapeAndUpdateData = async (pubSubEvent, context) => {
   const tableData = await fetchData();
-  const countriesData = await constructCountryInfo(tableData);
+  const countriesData = await constructCountryInfo(tableData); // Get a new write batch
+  var batch = db.batch();
 
   countriesData.forEach(info => {
     const docRef = db.collection("latestValues").doc(info["country"]);
-
-    docRef
-      .update({
+    batch.set(
+      docRef,
+      {
         cases: info["cases"],
         critical: info["critical"],
         recovered: info["recovered"],
         deaths: info["deaths"]
-      })
-      .catch(error => {
-        console.log("Creating new data for country: " + info["country"]);
-        docRef.set({
-          cases: info["cases"],
-          critical: info["critical"],
-          recovered: info["recovered"],
-          deaths: info["deaths"]
-        });
-
-        db.collection("history")
-          .doc()
-          .set({
-            cases: info["cases"],
-            critical: info["critical"],
-            recovered: info["recovered"],
-            deaths: info["deaths"],
-            time: admin.firestore.FieldValue.serverTimestamp(),
-            country: info["country"]
-          });
-      });
+      },
+      { merge: true }
+    );
   });
 
-  res.send({
+  batch
+    .commit()
+    .then(commitResult => {
+      console.log("update completed");
+    })
+    .catch(error => {
+      console.error(error);
+    });
+
+  /*res.send({
     fullList: countriesData
-  });
-});
+  });*/
+};
 
 const constructCountryInfo = async tableData => {
   const totalCountries = [];
