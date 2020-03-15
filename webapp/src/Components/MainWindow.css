@@ -1,0 +1,22 @@
+.wrapper {
+  width: 100vw;
+  height: calc(100vh - 100px);
+  display: grid;
+  grid-template-columns: 60% 40%;
+  padding-right: 20px;
+  padding-left: 20px;
+  padding-bottom: 120px;
+}
+
+.map, table {
+  width: 100%;
+}
+
+.map {
+  min-width: 300px;
+  background: blue;
+}
+
+.table {
+  min-width: 520px;
+}

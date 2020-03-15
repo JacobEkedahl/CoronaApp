@@ -48,9 +48,8 @@ exports.scrapeAndUpdateData = async (pubSubEvent, context) => {
   var batch = db.batch();
 
   countriesData.forEach(info => {
-    const docRef = db.collection("latestValues").doc(info["country"]);
     batch.set(
-      docRef,
+      db.collection(`latestValues/${info["country"]}`),
       {
         cases: info["cases"],
         critical: info["critical"],
@@ -166,6 +165,8 @@ const fetchData = async () => {
 };
 
 const countries = {
+  Bahamas: "Bahamas",
+  Congo: "Congo",
   CAR: "CAR",
   Guam: "Guam",
   Uzbekistan: "Uzbekistan",
