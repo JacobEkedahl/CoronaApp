@@ -8,6 +8,7 @@ import { render } from "react-dom";
 import { Provider } from "react-redux";
 import { ReactReduxFirebaseProvider } from "react-redux-firebase";
 import { createFirestoreInstance } from "redux-firestore";
+import FirestoreWrapper from "./Components/FirestoreWrapper";
 import MainWindow from "./Components/MainWindow";
 import * as config from "./config";
 import createStore from "./createStore";
@@ -23,8 +24,7 @@ const darkTheme = createMuiTheme({
 firebase.initializeApp(config.fbConfig);
 
 const styles = {
-  fontFamily: "sans-serif",
-  textAlign: "center"
+  textAlign: "left"
 };
 
 const store = createStore();
@@ -40,8 +40,8 @@ function App() {
       >
         <ThemeProvider theme={darkTheme}>
           <CssBaseline />
-          <div style={styles}>
-            <h2>Corona Virus Live Updates {"\u2728"}</h2>
+          <div style={{ styles }}>
+            <FirestoreWrapper />
             <MainWindow />
           </div>
         </ThemeProvider>

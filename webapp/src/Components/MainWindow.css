@@ -1,11 +1,12 @@
 .wrapper {
   width: 100vw;
-  height: calc(100vh - 100px);
+  height: 100vh;
   display: grid;
   grid-template-columns: 1fr 20px 520px;
   padding-left: 20px;
   padding-right: 20px;
-  padding-bottom: 120px;
+  padding-bottom: 20px;
+  padding-top: 20px;
 }
 
 .map, table, .hideButton {
@@ -24,5 +25,5 @@
 
 .table {
   display:flex;
-  max-height:calc(100vh - 100px);
+  max-height:calc(100vh - 40px);
 }
