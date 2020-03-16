@@ -2,14 +2,19 @@
   width: 100vw;
   height: calc(100vh - 100px);
   display: grid;
-  grid-template-columns: 60% 40%;
-  padding-right: 20px;
+  grid-template-columns: 1fr 20px 520px;
   padding-left: 20px;
+  padding-right: 20px;
   padding-bottom: 120px;
 }
 
-.map, table {
+.map, table, .hideButton {
   width: 100%;
+}
+
+.hideButton {
+  align-self: center;
+  margin-left: -15px;
 }
 
 .map {
@@ -18,5 +23,6 @@
 }
 
 .table {
-  min-width: 520px;
+  display:flex;
+  max-height:calc(100vh - 100px);
 }

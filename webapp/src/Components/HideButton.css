@@ -1,0 +1,18 @@
+.circle-element {
+  height: 30px;
+  width: 30px;
+  display: inline-block;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  background-color: rgb(22, 130, 192);
+  color: #FFF;
+  line-height: 2rem;
+  text-align: center;
+  font-family: sans-serif;
+  font-weight: bold;
+}
+
+.circle-element:hover {
+  background-color: rgb(85, 178, 231);
+  cursor: pointer;
+}
