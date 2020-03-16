@@ -29,13 +29,14 @@ const transformLatestValues = data => {
 
 export const TableElement = ({ data }) =>
   !!data && (
-    <div>
+    <>
       <ReactTable
+        style={{ width: "100%" }}
         data={transformLatestValues(data)}
         pageSizeOptions={[]}
         sortable
         showPagination={false}
-        resizable={true}
+        resizable={false}
         columns={[
           {
             filterable: true,
@@ -87,8 +88,8 @@ export const TableElement = ({ data }) =>
             }
           }
         ]}
-        defaultPageSize={16}
+        defaultPageSize={Object.keys(data).length}
         className="-striped -highlight"
       />
-    </div>
+    </>
   );
