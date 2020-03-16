@@ -1,11 +1,16 @@
 import { TextField } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactTable from "react-table-6";
 import "react-table-6/react-table.css";
 import "./TableElement.css";
 
 export const TableElement = ({ data }) => {
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   if (!data) return null;
 
   let filteredData = data;
@@ -14,10 +19,10 @@ export const TableElement = ({ data }) => {
       return info.country.toLowerCase().startsWith(search.toLowerCase());
     });
   }
-
   return (
     <>
       <ReactTable
+        minRows={19}
         getTheadFilterProps={(state, rowInfo, column, instance) => {
           return {
             style: { zIndex: 10, position: "relative" }
@@ -43,7 +48,9 @@ export const TableElement = ({ data }) => {
                 label="Country"
                 variant="outlined"
                 size="small"
-                onChange={event => setSearch(event.target.value)}
+                onChange={event => {
+                  setSearch(event.target.value);
+                }}
               />
             ),
             accessor: "country"
@@ -89,7 +96,7 @@ export const TableElement = ({ data }) => {
             }
           }
         ]}
-        defaultPageSize={data.length}
+        defaultPageSize={filteredData.length}
         className="-striped -highlight"
       />
     </>
