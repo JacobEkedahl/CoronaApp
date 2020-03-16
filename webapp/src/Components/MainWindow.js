@@ -1,6 +1,5 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { useFirestoreConnect } from "react-redux-firebase";
 import { getLatestValues } from "../reducers/latestValues";
 import { getIsMinimized } from "../reducers/tableReducer";
 import HideButton from "./HideButton";
@@ -9,9 +8,10 @@ import MapElement from "./MapElement";
 import { TableElement } from "./TableElement";
 
 function MainWindow() {
-  useFirestoreConnect("latestValues"); // sync todos collection from Firestore into redux
   const latestValues = useSelector(state => getLatestValues(state));
   const isMinimzed = useSelector(state => getIsMinimized(state));
+
+  if (!latestValues) return null;
 
   return (
     <div
@@ -26,11 +26,38 @@ function MainWindow() {
       <div className="hideButton">
         <HideButton />
       </div>
-      <div className="table">
-        <TableElement data={latestValues} />
-      </div>
+      {!isMinimzed && (
+        <div className="table">
+          <TableElement data={transformLatestValues(latestValues)} />
+        </div>
+      )}
     </div>
   );
 }
+
+const transformLatestValues = data => {
+  const countriesWithInfo = Object.keys(data).map(key => {
+    const cases = data[key].cases || "0";
+    const deaths = data[key].deaths || "0";
+    const critical = data[key].critical || "0";
+    const recovered = data[key].recovered || "0";
+
+    return {
+      country: key,
+      cases: cases,
+      deaths: deaths,
+      critical: critical,
+      recovered: recovered
+    };
+  });
+
+  countriesWithInfo.sort(function(a, b) {
+    const numberB = b.cases.replace(/[ ,.]/g, "");
+    const numberA = a.cases.replace(/[ ,.]/g, "");
+    return numberB - numberA;
+  });
+
+  return countriesWithInfo;
+};
 
 export default MainWindow;

@@ -1,51 +1,59 @@
-import React from "react";
+import { TextField } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
 import ReactTable from "react-table-6";
 import "react-table-6/react-table.css";
+import "./TableElement.css";
 
-const transformLatestValues = data => {
-  const countriesWithInfo = Object.keys(data).map(key => {
-    const cases = data[key].cases || "0";
-    const deaths = data[key].deaths || "0";
-    const critical = data[key].critical || "0";
-    const recovered = data[key].recovered || "0";
+export const TableElement = ({ data }) => {
+  const [search, setSearch] = useState("");
 
-    return {
-      country: key,
-      cases: cases,
-      deaths: deaths,
-      critical: critical,
-      recovered: recovered
-    };
-  });
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
-  countriesWithInfo.sort(function(a, b) {
-    const numberB = b.cases.replace(/[ ,.]/g, "");
-    const numberA = a.cases.replace(/[ ,.]/g, "");
-    return numberB - numberA;
-  });
+  if (!data) return null;
 
-  return countriesWithInfo;
-};
-
-export const TableElement = ({ data }) =>
-  !!data && (
+  let filteredData = data;
+  if (!!search) {
+    filteredData = filteredData.filter(info => {
+      return info.country.toLowerCase().startsWith(search.toLowerCase());
+    });
+  }
+  return (
     <>
       <ReactTable
-        style={{ width: "100%" }}
-        data={transformLatestValues(data)}
+        minRows={19}
+        getTheadFilterProps={(state, rowInfo, column, instance) => {
+          return {
+            style: { zIndex: 10, position: "relative" }
+          };
+        }}
+        getTheadProps={(state, rowInfo, column, instance) => {
+          return {
+            style: {
+              display: "block"
+            }
+          };
+        }}
+        data={filteredData}
         pageSizeOptions={[]}
         sortable
         showPagination={false}
         resizable={false}
         columns={[
           {
-            filterable: true,
-            Header: "Countries",
-            accessor: "country",
-            filterMethod: (filter, row) =>
-              row[filter.id]
-                .toLowerCase()
-                .startsWith(filter.value.toLowerCase())
+            sortable: false,
+            Header: (
+              <TextField
+                label="Country"
+                variant="outlined"
+                size="small"
+                onChange={event => {
+                  setSearch(event.target.value);
+                }}
+              />
+            ),
+            accessor: "country"
           },
           {
             Header: "Cases",
@@ -88,8 +96,9 @@ export const TableElement = ({ data }) =>
             }
           }
         ]}
-        defaultPageSize={Object.keys(data).length}
+        defaultPageSize={filteredData.length}
         className="-striped -highlight"
       />
     </>
   );
+};
