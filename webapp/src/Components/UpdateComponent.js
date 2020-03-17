@@ -4,6 +4,7 @@ import { LOAD_ANIMATED } from "../actions/tableActions";
 import { getLatestUpdated } from "../reducers/latestValues";
 
 function UpdateComponent() {
+  //return <></>;
   useSelector(state => getLatestUpdated(state));
   const dispatch = useDispatch();
 
