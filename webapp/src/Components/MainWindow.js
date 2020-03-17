@@ -8,11 +8,11 @@ import MapElement from "./MapElement";
 import { TableElement } from "./TableElement";
 
 function MainWindow() {
-  const latestValues = useSelector(state => getLatestValues(state));
   const isMinimzed = useSelector(state => getIsMinimized(state));
+  const latestValues = useSelector(state => getLatestValues(state));
 
   if (!latestValues) return null;
-
+  console.log(latestValues);
   return (
     <div
       className="wrapper"
@@ -28,7 +28,10 @@ function MainWindow() {
       </div>
       {!isMinimzed && (
         <div className="table">
-          <TableElement data={transformLatestValues(latestValues)} />
+          <TableElement
+            data={transformLatestValues(latestValues.allValues)}
+            newValues={latestValues.newValue}
+          />
         </div>
       )}
     </div>

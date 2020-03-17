@@ -6,7 +6,7 @@ const table = (
   },
   action
 ) => {
-  console.log(action.payload);
+  console.log(state);
   switch (action.type) {
     case TOGGLE_TABLE:
       return { isMinimized: action.payload };

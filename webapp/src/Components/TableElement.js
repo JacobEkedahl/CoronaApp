@@ -1,15 +1,15 @@
 import { TextField } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ReactTable from "react-table-6";
 import "react-table-6/react-table.css";
 import "./TableElement.css";
 
-export const TableElement = ({ data }) => {
-  const [search, setSearch] = useState("");
+function isString(value) {
+  return typeof value === "string" || value instanceof String;
+}
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+export const TableElement = ({ data, newValues }) => {
+  const [search, setSearch] = useState("");
 
   if (!data) return null;
 
@@ -22,13 +22,44 @@ export const TableElement = ({ data }) => {
   return (
     <>
       <ReactTable
-        minRows={19}
-        getTheadFilterProps={(state, rowInfo, column, instance) => {
-          return {
-            style: { zIndex: 10, position: "relative" }
-          };
+        getTrProps={(state, rowInfo, column, instance) => {
+          // console.log(rowInfo);
+          if (
+            !!newValues &&
+            !!rowInfo &&
+            rowInfo.original.country === newValues.country
+          ) {
+            return {
+              style: {
+                animation: "FADEIN 1.1s"
+              }
+            };
+          }
+
+          return {};
         }}
-        getTheadProps={(state, rowInfo, column, instance) => {
+        getTdProps={(state, rowInfo, column, instance) => {
+          // console.log(rowInfo);
+          if (
+            !!newValues &&
+            !!rowInfo &&
+            rowInfo.original.country === newValues.country &&
+            isString(column.Header) &&
+            Object.keys(newValues).includes(
+              column.Header.toString().toLowerCase()
+            )
+          ) {
+            return {
+              style: {
+                animation: "FADEIN_TD 2.2s"
+              }
+            };
+          }
+
+          return {};
+        }}
+        minRows={19}
+        getTheadProps={() => {
           return {
             style: {
               display: "block"
