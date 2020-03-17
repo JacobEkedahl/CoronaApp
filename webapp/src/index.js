@@ -10,6 +10,7 @@ import { ReactReduxFirebaseProvider } from "react-redux-firebase";
 import { createFirestoreInstance } from "redux-firestore";
 import FirestoreWrapper from "./Components/FirestoreWrapper";
 import MainWindow from "./Components/MainWindow";
+import UpdateComponent from "./Components/UpdateComponent";
 import * as config from "./config";
 import createStore from "./createStore";
 import registerServiceWorker from "./registerServiceWorker";
@@ -42,6 +43,7 @@ function App() {
           <CssBaseline />
           <div style={{ styles }}>
             <FirestoreWrapper />
+            <UpdateComponent />
             <MainWindow />
           </div>
         </ThemeProvider>

@@ -1,1 +1,2 @@
 export const TOGGLE_TABLE = "TOGGLE_TABLE";
+export const LOAD_ANIMATED = "LOAD_ANIMATED";

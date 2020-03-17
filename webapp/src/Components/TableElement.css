@@ -12,3 +12,13 @@
     font-weight: normal;
     outline-width: 0;
 }
+
+@keyframes FADEIN_TD {
+  0%   {font-size: 0.875rem; font-weight: bold}
+  50% {font-size: 0.9rem; font-weight: bold}
+}
+
+@keyframes FADEIN {
+  0%   { opacity: 0; background: #303030}
+  60%  { opacity: 1; background: #03DAC6}
+}
