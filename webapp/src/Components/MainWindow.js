@@ -21,17 +21,19 @@ function MainWindow() {
       }}
     >
       <div className="map">
-        <MapElement />
+        <MapElement latestValues={latestValues.allValues} />
       </div>
       <div className="hideButton">
         <HideButton />
       </div>
       {!isMinimzed && (
         <div className="table">
-          <TableElement
-            data={transformLatestValues(latestValues.allValues)}
-            newValues={latestValues.newValue}
-          />
+          {!!latestValues && (
+            <TableElement
+              data={transformLatestValues(latestValues.allValues)}
+              newValues={latestValues.newValue}
+            />
+          )}
         </div>
       )}
     </div>
