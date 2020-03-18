@@ -1,6 +1,9 @@
 import { cloneDeep } from "lodash";
 import { LATEST_INIT, LATEST_MODIFIED } from "../actions/firestoreActions";
-import { LOAD_ANIMATED } from "../actions/tableActions";
+import {
+  DONT_SHOW_NOTIFICATIONS,
+  LOAD_ANIMATED
+} from "../actions/tableActions";
 
 const getDifferenceTwoString = (numberA, numberB) => {
   const a = parseInt(numberA.replace(/[ ,.]/g, "")) || 0;
@@ -13,11 +16,17 @@ const latest = (
     toBeAnimated: [],
     data: null,
     lastUpdated: null,
-    hasLoaded: false
+    hasLoaded: false,
+    canShowNotification: true
   },
   action
 ) => {
   switch (action.type) {
+    case DONT_SHOW_NOTIFICATIONS:
+      return {
+        ...state,
+        canShowNotification: false
+      };
     case LOAD_ANIMATED:
       if (state.toBeAnimated.length === 0) {
         return {
@@ -25,7 +34,8 @@ const latest = (
           data: {
             allValues: state.data.allValues,
             newValue: null
-          }
+          },
+          canShowNotification: false
         };
       }
 
@@ -76,7 +86,8 @@ const latest = (
         data: {
           allValues: newLatest,
           newValue: { country: nextToBeAnimated.country, ...updatedData }
-        }
+        },
+        canShowNotification: true
       };
 
     case LATEST_MODIFIED:
@@ -118,6 +129,7 @@ const canUpdate = oldDate => {
 
 export default latest;
 
+export const getCanShowNotification = state => state.latest.canShowNotification;
 export const getHasLoaded = state => state.latest.hasLoaded;
 export const getLatestUpdated = state => state.latest.lastUpdated;
 export const getCountriesToBeAnimated = state => state.latest.toBeAnimated;
