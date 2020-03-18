@@ -1,10 +1,11 @@
 import { TextField } from "@material-ui/core";
 import React, { useState } from "react";
 import { store } from "react-notifications-component";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ReactTable from "react-table-6";
 import "react-table-6/react-table.css";
-import { getLatestValues } from "../reducers/latestValues";
+import { DONT_SHOW_NOTIFICATIONS } from "../actions/tableActions";
+import { getCanShowNotification } from "../reducers/latestValues";
 import {
   newCases,
   newCritical,
@@ -17,48 +18,30 @@ function isString(value) {
   return typeof value === "string" || value instanceof String;
 }
 
-export const TableElement = () => {
+export const TableElement = ({ allValues, newValue }) => {
   const [search, setSearch] = useState("");
-  const latestValues = useSelector(state => getLatestValues(state));
+  const canShowNotification = useSelector(state =>
+    getCanShowNotification(state)
+  );
+  const dispatch = useDispatch();
 
-  console.log("loading table");
-  if (!latestValues || !latestValues.allValues) {
-    return null;
+  if (!!newValue && canShowNotification) {
+    if (newValue["cases"]) {
+      store.addNotification(newCases(newValue.country, newValue.cases));
+    }
+    if (newValue["deaths"]) {
+      store.addNotification(newDeaths(newValue.country, newValue.deaths));
+    }
+    if (newValue["critical"]) {
+      store.addNotification(newCritical(newValue.country, newValue.critical));
+    }
+    if (newValue["recovered"]) {
+      store.addNotification(newRecovered(newValue.country, newValue.recovered));
+    }
+    dispatch({ type: DONT_SHOW_NOTIFICATIONS });
   }
 
-  const data = transformLatestValues(latestValues.allValues);
-  const newValues = latestValues.newValue;
-
-  if (!!latestValues.newValue) {
-    if (latestValues.newValue["cases"]) {
-      store.addNotification(
-        newCases(latestValues.newValue.country, latestValues.newValue.cases)
-      );
-    }
-    if (latestValues.newValue["deaths"]) {
-      store.addNotification(
-        newDeaths(latestValues.newValue.country, latestValues.newValue.deaths)
-      );
-    }
-    if (latestValues.newValue["critical"]) {
-      store.addNotification(
-        newCritical(
-          latestValues.newValue.country,
-          latestValues.newValue.critical
-        )
-      );
-    }
-    if (latestValues.newValue["recovered"]) {
-      store.addNotification(
-        newRecovered(
-          latestValues.newValue.country,
-          latestValues.newValue.recovered
-        )
-      );
-    }
-  }
-
-  let filteredData = data;
+  let filteredData = allValues;
   if (!!search) {
     filteredData = filteredData.filter(info => {
       return info.country.toLowerCase().startsWith(search.toLowerCase());
@@ -70,9 +53,9 @@ export const TableElement = () => {
         getTrProps={(state, rowInfo, column, instance) => {
           // console.log(rowInfo);
           if (
-            !!newValues &&
+            !!newValue &&
             !!rowInfo &&
-            rowInfo.original.country === newValues.country
+            rowInfo.original.country === newValue.country
           ) {
             return {
               style: {
@@ -86,11 +69,11 @@ export const TableElement = () => {
         getTdProps={(state, rowInfo, column, instance) => {
           // console.log(rowInfo);
           if (
-            !!newValues &&
+            !!newValue &&
             !!rowInfo &&
-            rowInfo.original.country === newValues.country &&
+            rowInfo.original.country === newValue.country &&
             isString(column.Header) &&
-            Object.keys(newValues).includes(
+            Object.keys(newValue).includes(
               column.Header.toString().toLowerCase()
             )
           ) {
@@ -177,29 +160,4 @@ export const TableElement = () => {
       />
     </>
   );
-};
-
-const transformLatestValues = data => {
-  const countriesWithInfo = Object.keys(data).map(key => {
-    const cases = data[key].cases || "0";
-    const deaths = data[key].deaths || "0";
-    const critical = data[key].critical || "0";
-    const recovered = data[key].recovered || "0";
-
-    return {
-      country: key,
-      cases: cases,
-      deaths: deaths,
-      critical: critical,
-      recovered: recovered
-    };
-  });
-
-  countriesWithInfo.sort(function(a, b) {
-    const numberB = b.cases.replace(/[ ,.]/g, "");
-    const numberA = a.cases.replace(/[ ,.]/g, "");
-    return numberB - numberA;
-  });
-
-  return countriesWithInfo;
 };
