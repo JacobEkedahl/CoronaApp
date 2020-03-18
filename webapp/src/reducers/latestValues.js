@@ -145,4 +145,3 @@ export const getHasLoaded = state => state.latest.hasLoaded;
 export const getLatestUpdated = state => state.latest.lastUpdated;
 export const getCountriesToBeAnimated = state => state.latest.toBeAnimated;
 export const getLatestValues = state => state.latest.data;
-export const getSwedenLatest = state => state.latest.data?.Sweden;

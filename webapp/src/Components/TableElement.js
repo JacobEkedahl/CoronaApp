@@ -50,6 +50,13 @@ export const TableElement = ({ allValues, newValue }) => {
   return (
     <>
       <ReactTable
+        getProps={() => {
+          return {
+            style: {
+              width: "100%"
+            }
+          };
+        }}
         getTrProps={(state, rowInfo, column, instance) => {
           // console.log(rowInfo);
           if (
@@ -87,13 +94,6 @@ export const TableElement = ({ allValues, newValue }) => {
           return {};
         }}
         minRows={19}
-        getTheadProps={() => {
-          return {
-            style: {
-              display: "block"
-            }
-          };
-        }}
         data={filteredData}
         pageSizeOptions={[]}
         sortable

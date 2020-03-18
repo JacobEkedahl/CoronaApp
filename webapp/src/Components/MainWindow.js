@@ -15,12 +15,7 @@ function MainWindow() {
   if (!hasLoaded) return null;
 
   return (
-    <div
-      className="wrapper"
-      style={{
-        gridTemplateColumns: isMinimzed ? "1fr 20px 0px" : "1fr 20px 520px"
-      }}
-    >
+    <div className={isMinimzed ? "wrapperMinimized" : "wrapper"}>
       <div className="map">
         <MapElement latestValues={latestValues.allValues} />
       </div>

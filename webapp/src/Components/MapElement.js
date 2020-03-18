@@ -1,6 +1,8 @@
 import React from "react";
 import { VectorMap } from "react-jvectormap";
 import { countries } from "../constants";
+import ChartElement from "./ChartElement";
+import "./MapElement.css";
 
 const getRanking = countryInfo => {
   const cases = parseInt(countryInfo.cases.replace(/[ ,.]/g, "")) || 0;
@@ -79,7 +81,9 @@ const MapElement = ({ latestValues }) => {
             }
           ]
         }}
-      />
+      ></VectorMap>
+
+      <ChartElement />
     </>
   );
 };
