@@ -17,7 +17,8 @@ const latest = (
     data: null,
     lastUpdated: null,
     hasLoaded: false,
-    canShowNotification: true
+    canShowNotification: true,
+    total: null
   },
   action
 ) => {
@@ -91,6 +92,12 @@ const latest = (
       };
 
     case LATEST_MODIFIED:
+      if (action.meta.doc === "Total") {
+        return {
+          ...state,
+          total: { ...action.payload.data }
+        };
+      }
       return {
         ...state,
         lastUpdated: canUpdate(state.lastUpdated)
@@ -112,10 +119,14 @@ const latest = (
         return state;
       }
 
+      const total = action.payload.data["Total"];
+      let incomingPayload = cloneDeep(action.payload.data);
+      delete incomingPayload.Total;
       return {
         ...state,
-        data: { allValues: action.payload.data, newValue: null },
-        hasLoaded: true
+        data: { allValues: incomingPayload, newValue: null },
+        hasLoaded: true,
+        total: total
       };
 
     default:
