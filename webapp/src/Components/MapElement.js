@@ -1,6 +1,8 @@
 import React from "react";
 import { VectorMap } from "react-jvectormap";
+import { useSelector } from "react-redux";
 import { countries } from "../constants";
+import { getLatestValues } from "../reducers/latestValues";
 
 const getRanking = countryInfo => {
   const cases = parseInt(countryInfo.cases.replace(/[ ,.]/g, "")) || 0;
@@ -28,22 +30,17 @@ const mapDataToCountries = latestValues => {
   return result;
 };
 
-const mapData = {
-  CN: 100000,
-  IN: 9900,
-  SA: 86,
-  EG: 70,
-  SE: 0,
-  FI: 0,
-  FR: 0,
-  US: 20
-};
-
 const handleClick = (e, countryCode) => {
   console.log(countryCode);
 };
 
-const MapElement = ({ latestValues }) => {
+const MapElement = () => {
+  const latestValuesData = useSelector(state => getLatestValues(state));
+
+  console.log("loading map");
+  if (!latestValuesData || !latestValuesData.allValues) return null;
+  const latestValues = latestValuesData.allValues;
+
   return (
     <>
       <VectorMap

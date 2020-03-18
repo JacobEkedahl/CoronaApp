@@ -5,6 +5,8 @@ import "firebase/auth";
 import "firebase/firestore";
 import React from "react";
 import { render } from "react-dom";
+import ReactNotification from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 import { Provider } from "react-redux";
 import { ReactReduxFirebaseProvider } from "react-redux-firebase";
 import { createFirestoreInstance } from "redux-firestore";
@@ -42,6 +44,15 @@ function App() {
         <ThemeProvider theme={darkTheme}>
           <CssBaseline />
           <div style={{ styles }}>
+            <ReactNotification
+              types={[
+                {
+                  htmlClasses: ["notification-awesome"],
+                  name: "awesome"
+                }
+              ]}
+              isMobile={true}
+            />
             <FirestoreWrapper />
             <UpdateComponent />
             <MainWindow />

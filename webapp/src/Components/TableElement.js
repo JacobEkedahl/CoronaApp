@@ -1,17 +1,62 @@
 import { TextField } from "@material-ui/core";
 import React, { useState } from "react";
+import { store } from "react-notifications-component";
+import { useSelector } from "react-redux";
 import ReactTable from "react-table-6";
 import "react-table-6/react-table.css";
+import { getLatestValues } from "../reducers/latestValues";
+import {
+  newCases,
+  newCritical,
+  newDeaths,
+  newRecovered
+} from "./Notifications";
 import "./TableElement.css";
 
 function isString(value) {
   return typeof value === "string" || value instanceof String;
 }
 
-export const TableElement = ({ data, newValues }) => {
+export const TableElement = () => {
   const [search, setSearch] = useState("");
+  const latestValues = useSelector(state => getLatestValues(state));
 
-  if (!data) return null;
+  console.log("loading table");
+  if (!latestValues || !latestValues.allValues) {
+    return null;
+  }
+
+  const data = transformLatestValues(latestValues.allValues);
+  const newValues = latestValues.newValue;
+
+  if (!!latestValues.newValue) {
+    if (latestValues.newValue["cases"]) {
+      store.addNotification(
+        newCases(latestValues.newValue.country, latestValues.newValue.cases)
+      );
+    }
+    if (latestValues.newValue["deaths"]) {
+      store.addNotification(
+        newDeaths(latestValues.newValue.country, latestValues.newValue.deaths)
+      );
+    }
+    if (latestValues.newValue["critical"]) {
+      store.addNotification(
+        newCritical(
+          latestValues.newValue.country,
+          latestValues.newValue.critical
+        )
+      );
+    }
+    if (latestValues.newValue["recovered"]) {
+      store.addNotification(
+        newRecovered(
+          latestValues.newValue.country,
+          latestValues.newValue.recovered
+        )
+      );
+    }
+  }
 
   let filteredData = data;
   if (!!search) {
@@ -132,4 +177,29 @@ export const TableElement = ({ data, newValues }) => {
       />
     </>
   );
+};
+
+const transformLatestValues = data => {
+  const countriesWithInfo = Object.keys(data).map(key => {
+    const cases = data[key].cases || "0";
+    const deaths = data[key].deaths || "0";
+    const critical = data[key].critical || "0";
+    const recovered = data[key].recovered || "0";
+
+    return {
+      country: key,
+      cases: cases,
+      deaths: deaths,
+      critical: critical,
+      recovered: recovered
+    };
+  });
+
+  countriesWithInfo.sort(function(a, b) {
+    const numberB = b.cases.replace(/[ ,.]/g, "");
+    const numberA = a.cases.replace(/[ ,.]/g, "");
+    return numberB - numberA;
+  });
+
+  return countriesWithInfo;
 };

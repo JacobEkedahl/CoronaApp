@@ -3,8 +3,8 @@ import { LATEST_INIT, LATEST_MODIFIED } from "../actions/firestoreActions";
 import { LOAD_ANIMATED } from "../actions/tableActions";
 
 const getDifferenceTwoString = (numberA, numberB) => {
-  const a = parseInt(numberA) || 0;
-  const b = parseInt(numberB) || 0;
+  const a = parseInt(numberA.replace(/[ ,.]/g, "")) || 0;
+  const b = parseInt(numberB.replace(/[ ,.]/g, "")) || 0;
   return Math.abs(a - b);
 };
 
@@ -12,7 +12,8 @@ const latest = (
   state = {
     toBeAnimated: [],
     data: null,
-    lastUpdated: null
+    lastUpdated: null,
+    hasLoaded: false
   },
   action
 ) => {
@@ -36,30 +37,35 @@ const latest = (
       const oldData = newLatest[nextToBeAnimated.country];
       newLatest[nextToBeAnimated.country] = { ...nextToBeAnimatedData };
 
+      const diffCases = getDifferenceTwoString(
+        nextToBeAnimatedData.cases,
+        oldData.cases
+      );
+      const diffDeaths = getDifferenceTwoString(
+        nextToBeAnimatedData.deaths,
+        oldData.deaths
+      );
+      const diffCritical = getDifferenceTwoString(
+        nextToBeAnimatedData.critical,
+        oldData.critical
+      );
+      const diffRecovered = getDifferenceTwoString(
+        nextToBeAnimatedData.recovered,
+        oldData.recovered
+      );
+
       const updatedData = {
-        ...(nextToBeAnimatedData.cases !== oldData.cases && {
-          cases: getDifferenceTwoString(
-            nextToBeAnimatedData.cases,
-            oldData.cases
-          )
+        ...(diffCases !== 0 && {
+          cases: diffCases
         }),
-        ...(nextToBeAnimatedData.deaths !== oldData.deaths && {
-          deaths: getDifferenceTwoString(
-            nextToBeAnimatedData.deaths,
-            oldData.deaths
-          )
+        ...(diffDeaths !== 0 && {
+          deaths: diffDeaths
         }),
-        ...(nextToBeAnimatedData.critical !== oldData.critical && {
-          critical: getDifferenceTwoString(
-            nextToBeAnimatedData.critical,
-            oldData.critical
-          )
+        ...(diffCritical !== 0 && {
+          critical: diffCritical
         }),
-        ...(nextToBeAnimatedData.recovered !== oldData.recovered && {
-          recovered: getDifferenceTwoString(
-            nextToBeAnimatedData.recovered,
-            oldData.recovered
-          )
+        ...(diffRecovered !== 0 && {
+          recovered: diffRecovered
         })
       };
 
@@ -97,7 +103,8 @@ const latest = (
 
       return {
         ...state,
-        data: { allValues: action.payload.data, newValue: null }
+        data: { allValues: action.payload.data, newValue: null },
+        hasLoaded: true
       };
 
     default:
@@ -111,6 +118,7 @@ const canUpdate = oldDate => {
 
 export default latest;
 
+export const getHasLoaded = state => state.latest.hasLoaded;
 export const getLatestUpdated = state => state.latest.lastUpdated;
 export const getCountriesToBeAnimated = state => state.latest.toBeAnimated;
 export const getLatestValues = state => state.latest.data;
