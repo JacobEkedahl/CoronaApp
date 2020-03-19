@@ -1,26 +1,114 @@
-.wrapper {
-  width: 100vw;
-  height: 100vh;
-  display: grid;
-  grid-template-columns: 1fr 20px 520px;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-bottom: 20px;
-  padding-top: 20px;
+@media screen and (min-width: 520px) and (max-width: 1200px) {
+  .wrapper {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+  }
+    
+  .hideButton {
+    display: none;
+  }
+    
+  .map {
+    height: 70vh;
+    min-width: 300px;
+  }
+
+  .tableHidden {
+    display:flex;
+  }
+
+}
+
+@media screen and (max-width: 520px) {
+  .wrapper {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+  }
+    
+  .hideButton {
+    display: none;
+  }
+    
+  .map {
+    height: 50vh;
+    min-width: 300px;
+  }
+
+  .table {
+    font-size: smaller;
+  }
+
+  .tableHidden {
+    display:flex;
+  }
+}
+
+@media screen and (min-width: 880px) {  
+  .wrapper {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 20px 520px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+  }
+
+  .wrapperMinimized {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 20px 0px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+  }
+    
+  .hideButton {
+    align-self: center;
+    margin-left: -15px;
+    z-index: 10;
+    display: block;
+  }
+
+  .map {
+    min-width: 300px;
+    height: calc(100vh - 40px);
+  }
+    
+  .toolbar {
+    width: 200px;
+    height: 30%;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 70px;
+    background: transparent;
+    min-width: 300px;
+  }
+
+  .toolbarFullscreen {
+  width: calc(100vw - 580px);
+    height: 40%;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 70px;
+    background: transparent;
+    min-width: 300px;
+  }
+
+  .tableHidden {
+    display:none;
+  }
 }
 
 .map, table, .hideButton {
   width: 100%;
-}
-
-.hideButton {
-  align-self: center;
-  margin-left: -15px;
-  z-index: 10;
-}
-
-.map {
-  min-width: 300px;
 }
 
 .table {

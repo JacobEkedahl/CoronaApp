@@ -2,7 +2,8 @@ import { cloneDeep } from "lodash";
 import { LATEST_INIT, LATEST_MODIFIED } from "../actions/firestoreActions";
 import {
   DONT_SHOW_NOTIFICATIONS,
-  LOAD_ANIMATED
+  LOAD_ANIMATED,
+  SELECTED_COUNTRIES
 } from "../actions/tableActions";
 
 const getDifferenceTwoString = (numberA, numberB) => {
@@ -18,11 +19,17 @@ const latest = (
     lastUpdated: null,
     hasLoaded: false,
     canShowNotification: true,
-    total: null
+    total: null,
+    currentSelected: null
   },
   action
 ) => {
   switch (action.type) {
+    case SELECTED_COUNTRIES:
+      return {
+        ...state,
+        currentSelected: action.payload
+      };
     case DONT_SHOW_NOTIFICATIONS:
       return {
         ...state,
@@ -140,9 +147,14 @@ const canUpdate = oldDate => {
 
 export default latest;
 
+export const getCurrentSelected = state =>
+  state.latest.currentSelected || "Total" || null;
 export const getCanShowNotification = state => state.latest.canShowNotification;
 export const getHasLoaded = state => state.latest.hasLoaded;
 export const getLatestUpdated = state => state.latest.lastUpdated;
 export const getCountriesToBeAnimated = state => state.latest.toBeAnimated;
 export const getLatestValues = state => state.latest.data;
-export const getSwedenLatest = state => state.latest.data?.Sweden;
+
+//history
+export const getSelectedHistory = state =>
+  state.firestore.ordered?.selectedHistory;

@@ -3,6 +3,7 @@ import { useFirestoreConnect } from "react-redux-firebase";
 
 function FirestoreWrapper() {
   useFirestoreConnect("latestValues");
+
   return <Fragment />;
 }
 

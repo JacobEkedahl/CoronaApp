@@ -2,6 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { getHasLoaded, getLatestValues } from "../reducers/latestValues";
 import { getIsMinimized } from "../reducers/tableReducer";
+import Chart from "./Chart";
 import HideButton from "./HideButton";
 import "./MainWindow.css";
 import MapElement from "./MapElement";
@@ -15,12 +16,7 @@ function MainWindow() {
   if (!hasLoaded) return null;
 
   return (
-    <div
-      className="wrapper"
-      style={{
-        gridTemplateColumns: isMinimzed ? "1fr 20px 0px" : "1fr 20px 520px"
-      }}
-    >
+    <div className={isMinimzed ? "wrapperMinimized" : "wrapper"}>
       <div className="map">
         <MapElement latestValues={latestValues.allValues} />
       </div>
@@ -28,13 +24,14 @@ function MainWindow() {
         <HideButton />
       </div>
 
-      <div className="table">
-        {!isMinimzed && (
-          <TableElement
-            allValues={transformLatestValues(latestValues.allValues)}
-            newValue={latestValues.newValue}
-          />
-        )}
+      <div className={isMinimzed ? "tableHidden" : "table"}>
+        <TableElement
+          allValues={transformLatestValues(latestValues.allValues)}
+          newValue={latestValues.newValue}
+        />
+      </div>
+      <div className={isMinimzed ? "toolbarFullscreen" : "toolbar"}>
+        <Chart />
       </div>
     </div>
   );
