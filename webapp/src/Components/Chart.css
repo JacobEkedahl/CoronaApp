@@ -40,7 +40,7 @@
 }
 
 .toolbarFullscreen {
-width: calc(100vw - 580px);
+  width: calc(70vw - 580px);
   height: 40%;
   position: absolute;
   bottom: 0;

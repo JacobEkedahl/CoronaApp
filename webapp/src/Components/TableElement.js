@@ -6,7 +6,8 @@ import ReactTable from "react-table-6";
 import "react-table-6/react-table.css";
 import {
   DONT_SHOW_NOTIFICATIONS,
-  SELECTED_COUNTRIES
+  SELECTED_COUNTRIES,
+  TOGGLE_CHART
 } from "../actions/tableActions";
 import { getCanShowNotification } from "../reducers/latestValues";
 import {
@@ -75,11 +76,13 @@ export const TableElement = ({ allValues, newValue }) => {
           }
 
           return {
-            onClick: e =>
+            onClick: e => {
               dispatch({
                 type: SELECTED_COUNTRIES,
                 payload: rowInfo.original.country
-              })
+              });
+              dispatch({ type: TOGGLE_CHART, payload: true });
+            }
           };
         }}
         getTdProps={(state, rowInfo, column, instance) => {

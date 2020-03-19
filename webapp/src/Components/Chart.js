@@ -15,7 +15,7 @@ import {
 import { compose } from "redux";
 import { TOGGLE_CHART } from "../actions/tableActions";
 import { getCurrentSelected } from "../reducers/latestValues";
-import { getCanShowChart } from "../reducers/tableReducer";
+import { getCanShowChart, getIsMinimized } from "../reducers/tableReducer";
 import "./Chart.css";
 const myProjectsReduxName = "selectedHistory";
 
@@ -26,8 +26,9 @@ const convertToInt = entry => {
   return parseInt(entry.replace(/[ ,.]/g, ""));
 };
 
-const ChartElement = isMinimized => {
+const ChartElement = () => {
   const dispatch = useDispatch();
+  const isMinimzed = useSelector(state => getIsMinimized(state));
   const currentSelected = useSelector(state => getCurrentSelected(state));
   const selectedHistory = useSelector(({ firestore: { ordered } }) => {
     const tempHistory = ordered.selectedHistory;
@@ -62,7 +63,7 @@ const ChartElement = isMinimized => {
   }
 
   return (
-    <div className={isMinimized ? "toolbar" : "toolbarFullscreen"}>
+    <div className={isMinimzed ? "toolbarFullscreen" : "toolbar"}>
       <div className="chart">
         <DummyElement country={currentSelected} />
         <div

@@ -30,7 +30,7 @@ function MainWindow() {
         />
       </div>
       <>
-        <Chart isMinimzed={isMinimzed} />
+        <Chart />
       </>
     </div>
   );

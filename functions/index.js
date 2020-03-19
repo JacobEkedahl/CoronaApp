@@ -41,15 +41,66 @@ exports.updateHistory = functions
       });
   });
 
+exports.newFunction = functions.https.onRequest(async (req, res) => {
+  let fromDate = new Date(2020, 2, 14, 22, 0, 0);
+  let toDate = new Date(2020, 2, 15, 23, 5, 0);
+  const result = [];
+
+  await db
+    .collection("history")
+    .where("time", ">", fromDate)
+    .where("time", "<", toDate)
+    .get()
+    .then(querySnapshot => {
+      querySnapshot.forEach(documentSnapshot => {
+        var data = documentSnapshot.data();
+        const id = documentSnapshot.id;
+        result.push({ id: documentSnapshot.id, country: data.country });
+        // do something with the data of each document.
+        console.log(data);
+        // documentSnapshot.delete();
+      });
+    })
+    .catch(error => {
+      res.send({ error: error });
+    });
+
+  const count = result.length;
+  const newResult = result.filter(entry => entry.country === "Total");
+  //res.send({ count });
+
+  newResult.forEach(toRemove => {
+    db.collection("history")
+      .doc(toRemove.id)
+      .delete()
+      .then(() => {
+        console.log("Document successfully deleted!");
+      })
+      .catch(error => {
+        console.error("Error removing document: ", error);
+      });
+  });
+
+  res.send({ docDeleted: count });
+});
+
 //exports.scrapeAndUpdateData = functions.https.onRequest(async (req, res) => {
 exports.scrapeAndUpdateData = async (pubSubEvent, context) => {
   const tableData = await fetchData();
+
+  if (tableData.length === 0) {
+    await axios.post(errorHook, {
+      username: "No data fetched",
+      content: `The data scraping returned an empty array`
+    });
+  }
+
   const countriesData = await constructCountryInfo(tableData); // Get a new write batch
   var batch = db.batch();
 
   countriesData.forEach(info => {
     batch.set(
-      db.collection(`latestValues/${info["country"]}`),
+      db.collection("latestValues").doc(info["country"]),
       {
         cases: info["cases"],
         critical: info["critical"],
@@ -93,7 +144,7 @@ const constructCountryInfo = async tableData => {
           if (country in countries) {
             totalCountries.push(countries[country]);
           } else {
-            excludedCountries.push(index);
+            totalCountries.push(country);
             excludeCountriesNames.push(country);
           }
         }
@@ -102,36 +153,28 @@ const constructCountryInfo = async tableData => {
       case "TotalCases":
         for (index = 1; index < column.length; index++) {
           const cases = column[index];
-          if (!(index in excludedCountries)) {
-            totalCases.push(cases);
-          }
+          totalCases.push(cases);
         }
         break;
 
       case "TotalDeaths":
         for (index = 1; index < column.length; index++) {
           const deaths = column[index];
-          if (!(index in excludedCountries)) {
-            totalDeath.push(deaths);
-          }
+          totalDeath.push(deaths);
         }
         break;
 
       case "TotalRecovered":
         for (index = 1; index < column.length; index++) {
           const recovered = column[index];
-          if (!(index in excludedCountries)) {
-            totalRecoveries.push(recovered);
-          }
+          totalRecoveries.push(recovered);
         }
 
         break;
       case "Serious,Critical":
         for (index = 1; index < column.length; index++) {
           const serious = column[index];
-          if (!(index in excludedCountries)) {
-            totalSerious.push(serious);
-          }
+          totalSerious.push(serious);
         }
     }
   });
@@ -161,16 +204,80 @@ const fetchData = async () => {
   const result = await axios.get(siteUrl);
   const $ = cheerio.load(result.data);
   cheerioTableparser($);
-  return $("#main_table_countries").parsetable(true, true, true);
+  return $("#main_table_countries_today").parsetable(true, true, true);
 };
 
 const countries = {
+  //not verified
+  Burundi: "Burundi",
+  Botswana: "Botswana",
+  Belize: "Belize",
+  "Timor-Leste": "Timor-Leste",
+  Turkmenistan: "Turkmenistan",
+  Tajikistan: "Tajikistan",
+  "Guinea-Bissau": "Guinea-Bissau",
+  Gambia: "Gambia",
+  Haiti: "Haiti",
+  "Papua New Guinea": "Papua New Guinea",
+  Zambia: "Zambia",
+  "W. Sahara": "W. Sahara",
+  "Solomon Is.": "Solomon Is.",
+  Zimbabwe: "Zimbabwe",
+  Eritrea: "Eritrea",
+  Montenegro: "Montenegro",
+  Madagascar: "Madagascar",
+  Myanmar: "Myanmar",
+  Mali: "Mali",
+  Macedonia: "Macedonia",
+  Malawi: "Malawi",
+  Uganda: "Uganda",
+  Somaliland: "Somaliland",
+  Fiji: "Fiji",
+  "Falkland Is.": "Falkland Is.",
+  Nicaragua: "Nicaragua",
+  Vanuatu: "Vanuatu",
+  "New Caledonia": "New Caledonia",
+  Niger: "Niger",
+  Kosovo: "Kosovo",
+  "N. Cyprus": "N. Cyprus",
+  "Central African Rep.": "Central African Rep.",
+  "Dem. Rep. Congo": "Dem. Rep. Congo",
+  Swaziland: "Swaziland",
+  Syria: "Syria",
+  Kyrgyzstan: "Kyrgyzstan",
+  "S. Sudan": "S. Sudan",
+  "El Salvador": "El Salvador",
+  "Dem. Rep. Korea": "Dem. Rep. Korea",
+  "Sierra Leone": "Sierra Leone",
+  Djibouti: "Djibouti",
+  Yemen: "Yemen",
+  "Lao PDR": "Lao PDR",
+  Lesotho: "Lesotho",
+  "Fr. S. Antarctic Lands": "Fr. S. Antarctic Lands",
+  Chad: "Chad",
+  Libya: "Libya",
+  Angola: "Angola",
+  Mozambique: "Mozambique",
+
+  //doesnt exist
+  Mauritius: "Mauritius",
+  Bermuda: "Bermuda",
+  "Sint Maarten": "Sint Maarten",
+
+  //Confirmed
+  Montserrat: "Montserrat",
+  Barbados: "Barbados",
+  Benin: "Benin",
+  Greenland: "Greenland",
+  Somalia: "Somalia",
+  Tanzania: "Tanzania",
+  Liberia: "Liberia",
   Bahamas: "Bahamas",
   Congo: "Congo",
   CAR: "CAR",
   Guam: "Guam",
   Uzbekistan: "Uzbekistan",
-  "Equatorial Guinea": "Equatorial Guinea",
+  "Equatorial Guinea": "Eq. Guinea",
   Seychelles: "Seychelles",
   Mayotte: "Mayotte",
   "Total:": "Total",
@@ -184,6 +291,7 @@ const countries = {
   USA: "USA",
   Switzerland: "Switzerland",
   UK: "United Kingdom",
+  Montserat: "Montserat", //doesnt exist on jvectormap
   Norway: "Norway",
   Netherlands: "Netherlands",
   Sweden: "Sweden",
