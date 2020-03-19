@@ -4,7 +4,10 @@ import { store } from "react-notifications-component";
 import { useDispatch, useSelector } from "react-redux";
 import ReactTable from "react-table-6";
 import "react-table-6/react-table.css";
-import { DONT_SHOW_NOTIFICATIONS } from "../actions/tableActions";
+import {
+  DONT_SHOW_NOTIFICATIONS,
+  SELECTED_COUNTRIES
+} from "../actions/tableActions";
 import { getCanShowNotification } from "../reducers/latestValues";
 import {
   newCases,
@@ -71,7 +74,13 @@ export const TableElement = ({ allValues, newValue }) => {
             };
           }
 
-          return {};
+          return {
+            onClick: e =>
+              dispatch({
+                type: SELECTED_COUNTRIES,
+                payload: rowInfo.original.country
+              })
+          };
         }}
         getTdProps={(state, rowInfo, column, instance) => {
           // console.log(rowInfo);
@@ -90,7 +99,6 @@ export const TableElement = ({ allValues, newValue }) => {
               }
             };
           }
-
           return {};
         }}
         minRows={19}

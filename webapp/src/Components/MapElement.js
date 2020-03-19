@@ -1,7 +1,8 @@
 import React from "react";
 import { VectorMap } from "react-jvectormap";
+import { useDispatch } from "react-redux";
+import { SELECTED_COUNTRIES } from "../actions/tableActions";
 import { countries } from "../constants";
-import ChartElement from "./ChartElement";
 import "./MapElement.css";
 
 const getRanking = countryInfo => {
@@ -30,11 +31,18 @@ const mapDataToCountries = latestValues => {
   return result;
 };
 
-const handleClick = (e, countryCode) => {
+const handleClick = (countryCode, dispatch) => {
+  const chosenCountry = Object.keys(countries).find(
+    key => countries[key] === countryCode
+  );
+  console.log(chosenCountry);
   console.log(countryCode);
+  dispatch({ type: SELECTED_COUNTRIES, payload: chosenCountry });
 };
 
 const MapElement = ({ latestValues }) => {
+  const dispatch = useDispatch();
+
   console.log("loading map");
   return (
     <>
@@ -46,7 +54,9 @@ const MapElement = ({ latestValues }) => {
           width: "100%",
           height: "100%"
         }}
-        onRegionClick={handleClick} //gets the country code
+        onRegionClick={(e, countryCode) => {
+          handleClick(countryCode, dispatch);
+        }} //gets the country code
         containerClassName="map"
         regionStyle={{
           initial: {
@@ -82,8 +92,6 @@ const MapElement = ({ latestValues }) => {
           ]
         }}
       ></VectorMap>
-
-      <ChartElement />
     </>
   );
 };
