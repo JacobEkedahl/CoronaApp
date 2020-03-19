@@ -66,15 +66,7 @@ const ChartElement = () => {
     <div className={isMinimzed ? "toolbarFullscreen" : "toolbar"}>
       <div className="chart">
         <DummyElement country={currentSelected} />
-        <div
-          style={{
-            width: "100%",
-            height: 40,
-            background: "#1b262c",
-            alignItems: "center",
-            display: "flex"
-          }}
-        >
+        <div className="headerContainer">
           <h2 style={{ paddingLeft: 10 }}>{currentSelected}</h2>
           <div
             className="minimize"

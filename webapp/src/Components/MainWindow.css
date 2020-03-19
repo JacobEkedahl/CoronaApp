@@ -11,15 +11,20 @@
   }
     
   .map {
-    height: 70vh;
+    height: 60vh;
     min-width: 300px;
   }
 
   .tableHidden {
     display:flex;
   }
-
 }
+
+@media screen and (min-width: 520px) and (max-width: 1200px) and (orientation: landscape) {
+  .map {
+    height: 75vh;
+  }
+} 
 
 @media screen and (max-width: 520px) {
   .wrapper {
