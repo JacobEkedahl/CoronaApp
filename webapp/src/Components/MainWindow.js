@@ -23,16 +23,15 @@ function MainWindow() {
       <div className="hideButton">
         <HideButton />
       </div>
-
       <div className={isMinimzed ? "tableHidden" : "table"}>
         <TableElement
           allValues={transformLatestValues(latestValues.allValues)}
           newValue={latestValues.newValue}
         />
       </div>
-      <div className={isMinimzed ? "toolbarFullscreen" : "toolbar"}>
-        <Chart />
-      </div>
+      <>
+        <Chart isMinimzed={isMinimzed} />
+      </>
     </div>
   );
 }

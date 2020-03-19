@@ -81,26 +81,6 @@
     min-width: 300px;
     height: calc(100vh - 40px);
   }
-    
-  .toolbar {
-    width: 200px;
-    height: 30%;
-    position: absolute;
-    bottom: 0;
-    margin-bottom: 70px;
-    background: transparent;
-    min-width: 300px;
-  }
-
-  .toolbarFullscreen {
-  width: calc(100vw - 580px);
-    height: 40%;
-    position: absolute;
-    bottom: 0;
-    margin-bottom: 70px;
-    background: transparent;
-    min-width: 300px;
-  }
 
   .tableHidden {
     display:none;
