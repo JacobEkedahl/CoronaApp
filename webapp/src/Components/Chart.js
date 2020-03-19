@@ -1,5 +1,7 @@
+import InsertChartIcon from "@material-ui/icons/InsertChart";
+import MinimizeIcon from "@material-ui/icons/Minimize";
 import React, { Fragment } from "react";
-import { connect, useSelector } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import {
   Legend,
@@ -11,7 +13,9 @@ import {
   YAxis
 } from "recharts";
 import { compose } from "redux";
+import { TOGGLE_CHART } from "../actions/tableActions";
 import { getCurrentSelected } from "../reducers/latestValues";
+import { getCanShowChart } from "../reducers/tableReducer";
 import "./Chart.css";
 const myProjectsReduxName = "selectedHistory";
 
@@ -22,7 +26,8 @@ const convertToInt = entry => {
   return parseInt(entry.replace(/[ ,.]/g, ""));
 };
 
-const ChartElement = () => {
+const ChartElement = isMinimized => {
+  const dispatch = useDispatch();
   const currentSelected = useSelector(state => getCurrentSelected(state));
   const selectedHistory = useSelector(({ firestore: { ordered } }) => {
     const tempHistory = ordered.selectedHistory;
@@ -41,30 +46,56 @@ const ChartElement = () => {
         (new Date(entry.time.seconds * 1000).getMonth() + 1)
     }));
   });
+  const canShow = useSelector(state => getCanShowChart(state));
 
   if (!currentSelected) {
     return null;
   }
+  if (!canShow) {
+    return (
+      <div className="toolbarExpand">
+        <InsertChartIcon
+          onClick={() => dispatch({ type: TOGGLE_CHART, payload: true })}
+        />
+      </div>
+    );
+  }
 
   return (
-    <div className="chart">
-      <DummyElement country={currentSelected} />
-      <div style={{ width: "100%", height: 40, background: "#1b262c" }}>
-        <h2 style={{ paddingTop: 5, paddingLeft: 10 }}>{currentSelected}</h2>
-      </div>
-      <ResponsiveContainer>
-        <LineChart data={selectedHistory}>
-          <Line type="monotone" dataKey="cases" stroke="#8884d8" />
-          <Line type="monotone" dataKey="deaths" stroke="#D9190E" />
-          <Line type="monotone" dataKey="critical" stroke="#EBE309" />
-          <Line type="monotone" dataKey="recovered" stroke="#00FF00" />
-          <XAxis dataKey="date" />
-          <YAxis />
+    <div className={isMinimized ? "toolbar" : "toolbarFullscreen"}>
+      <div className="chart">
+        <DummyElement country={currentSelected} />
+        <div
+          style={{
+            width: "100%",
+            height: 40,
+            background: "#1b262c",
+            alignItems: "center",
+            display: "flex"
+          }}
+        >
+          <h2 style={{ paddingLeft: 10 }}>{currentSelected}</h2>
+          <div
+            className="minimize"
+            onClick={() => dispatch({ type: TOGGLE_CHART, payload: false })}
+          >
+            <MinimizeIcon />
+          </div>
+        </div>
+        <ResponsiveContainer>
+          <LineChart data={selectedHistory}>
+            <Line type="monotone" dataKey="cases" stroke="#8884d8" />
+            <Line type="monotone" dataKey="deaths" stroke="#D9190E" />
+            <Line type="monotone" dataKey="critical" stroke="#EBE309" />
+            <Line type="monotone" dataKey="recovered" stroke="#00FF00" />
+            <XAxis dataKey="date" />
+            <YAxis />
 
-          <Legend />
-          <Tooltip />
-        </LineChart>
-      </ResponsiveContainer>
+            <Legend />
+            <Tooltip />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 };

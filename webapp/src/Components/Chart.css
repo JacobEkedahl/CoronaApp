@@ -4,3 +4,47 @@
   position: relative;
   background-color: rgba(27,38,44,0.5);
 }  
+
+.minimize {
+  position: absolute;
+  right:0;
+  height: 40px;
+}
+
+.minimize:hover {
+  cursor: pointer;
+}
+
+.toolbarExpand {
+  width: fit-content;
+  height: fit-content;
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 70px;
+  background: transparent;
+}
+
+.toolbarExpand:hover {
+  cursor: pointer;
+}
+
+  
+.toolbar {
+  width: 200px;
+  height: 30%;
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 70px;
+  background: transparent;
+  min-width: 300px;
+}
+
+.toolbarFullscreen {
+width: calc(100vw - 580px);
+  height: 40%;
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 70px;
+  background: transparent;
+  min-width: 300px;
+}

@@ -1,7 +1,7 @@
 import React from "react";
 import { VectorMap } from "react-jvectormap";
 import { useDispatch } from "react-redux";
-import { SELECTED_COUNTRIES } from "../actions/tableActions";
+import { SELECTED_COUNTRIES, TOGGLE_CHART } from "../actions/tableActions";
 import { countries } from "../constants";
 import "./MapElement.css";
 
@@ -38,6 +38,7 @@ const handleClick = (countryCode, dispatch) => {
   console.log(chosenCountry);
   console.log(countryCode);
   dispatch({ type: SELECTED_COUNTRIES, payload: chosenCountry });
+  dispatch({ type: TOGGLE_CHART, payload: true });
 };
 
 const MapElement = ({ latestValues }) => {
