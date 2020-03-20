@@ -84,6 +84,7 @@ export const countries = {
   Israel: "IL",
   France: "FR",
   Somaliland: "XS",
+  "Cape Verde": "CV",
   Finland: "FI",
   Fiji: "FJ",
   "Falkland Is.": "FK",

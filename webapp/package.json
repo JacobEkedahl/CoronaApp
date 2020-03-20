@@ -13,6 +13,7 @@
     "country-list": "^2.2.0",
     "firebase": "^7.11.0",
     "lodash": "^4.17.15",
+    "moment": "^2.24.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-google-charts": "^3.0.15",
