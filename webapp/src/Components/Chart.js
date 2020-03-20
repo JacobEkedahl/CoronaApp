@@ -1,5 +1,6 @@
 import InsertChartIcon from "@material-ui/icons/InsertChart";
 import MinimizeIcon from "@material-ui/icons/Minimize";
+import moment from "moment";
 import React, { Fragment } from "react";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
@@ -41,10 +42,7 @@ const ChartElement = () => {
       deaths: convertToInt(entry.deaths),
       critical: convertToInt(entry.critical),
       recovered: convertToInt(entry.recovered),
-      date:
-        new Date(entry.time.seconds * 1000).getDate() +
-        "/" +
-        (new Date(entry.time.seconds * 1000).getMonth() + 1)
+      date: entry.time.seconds
     }));
   });
   const canShow = useSelector(state => getCanShowChart(state));
@@ -76,14 +74,39 @@ const ChartElement = () => {
           </div>
         </div>
         <ResponsiveContainer>
-          <LineChart data={selectedHistory}>
-            <Line type="monotone" dataKey="cases" stroke="#8884d8" />
-            <Line type="monotone" dataKey="deaths" stroke="#D9190E" />
-            <Line type="monotone" dataKey="critical" stroke="#EBE309" />
-            <Line type="monotone" dataKey="recovered" stroke="#00FF00" />
-            <XAxis dataKey="date" />
+          <LineChart data={selectedHistory} margin={{ right: 20 }}>
+            <Line
+              type="monotone"
+              dataKey="cases"
+              stroke="#8884d8"
+              dot={false}
+            />
+            <Line
+              type="monotone"
+              dataKey="deaths"
+              stroke="#D9190E"
+              dot={false}
+            />
+            <Line
+              type="monotone"
+              dataKey="critical"
+              stroke="#EBE309"
+              dot={false}
+            />
+            <Line
+              type="monotone"
+              dataKey="recovered"
+              stroke="#00FF00"
+              dot={false}
+            />
+            <XAxis
+              dataKey="date"
+              type="number"
+              tickFormatter={formatXAxis}
+              domain={["dataMin", "dataMax"]}
+              allowDuplicatedCategory={false}
+            />
             <YAxis />
-
             <Legend />
             <Tooltip />
           </LineChart>
@@ -92,6 +115,11 @@ const ChartElement = () => {
     </div>
   );
 };
+
+function formatXAxis(tickItem) {
+  // If using moment.js
+  return moment(tickItem * 1000).format("MM-DD");
+}
 
 export default ChartElement;
 

@@ -103,21 +103,61 @@
     height: 35%;
     position: absolute;
     bottom: 0;
-    margin-bottom: 115px;
+    margin-bottom: 28vh;
+    background: transparent;
+    min-width: 300px;
+  }
+  
+  .toolbarFullscreen {
+    width: calc(45vw);
+    height: 40%;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 70px;
     background: transparent;
     min-width: 300px;
   }
 
+  h2 {
+    font-size: initial;
+  }
   
-.toolbarFullscreen {
-  width: calc(45vw);
-  height: 40%;
-  position: absolute;
-  bottom: 0;
-  margin-bottom: 70px;
-  background: transparent;
-  min-width: 300px;
+  .toolbarExpand {
+    width: fit-content;
+    height: fit-content;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 100px;
+    background: transparent;
+    z-index: 20;
+  }
+
+  .headerContainer {
+    height: 30px;
+  }
 }
+
+
+@media only screen and (orientation: landscape) and (min-width: 800px) {
+  .toolbar {
+    width: 30vw;
+    height: 35%;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 60px;
+    background: transparent;
+    min-width: 300px;
+  }
+  
+  .toolbarFullscreen {
+    width: calc(45vw);
+    height: 40%;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 70px;
+    background: transparent;
+    min-width: 300px;
+  }
 
   h2 {
     font-size: initial;

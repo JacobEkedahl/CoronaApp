@@ -3,6 +3,10 @@
   align-items: center;
 }
 
+.rt-tr-group:hover{
+  background: #0f4c75!important;
+}
+
 .countryInputBox {
   border: 1px solid rgba(0,0,0,0.1);
     background: #fff;
