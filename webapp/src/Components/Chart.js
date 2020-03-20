@@ -8,6 +8,7 @@ import {
   Legend,
   Line,
   LineChart,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -40,7 +41,7 @@ const ChartElement = () => {
     return sorted.map(entry => ({
       cases: convertToInt(entry.cases),
       deaths: convertToInt(entry.deaths),
-      critical: convertToInt(entry.critical),
+      ...(entry.critical !== "" && { critical: convertToInt(entry.critical) }),
       recovered: convertToInt(entry.recovered),
       date: entry.time.seconds
     }));
@@ -103,12 +104,23 @@ const ChartElement = () => {
               dataKey="date"
               type="number"
               tickFormatter={formatXAxis}
-              domain={["dataMin", "dataMax"]}
+              domain={[1583082945, "dataMax"]}
               allowDuplicatedCategory={false}
             />
             <YAxis />
             <Legend />
-            <Tooltip />
+            <Tooltip
+              labelFormatter={formatLabel}
+              contentStyle={customStyle}
+              formatter={value => new Intl.NumberFormat("en").format(value)}
+            />
+
+            <ReferenceLine x="1583064000" stroke="rgba(187,225,250,0.3)" />
+            <ReferenceLine x="1580558400" stroke="rgba(187,225,250,0.3)" />
+            <ReferenceLine x="1585742400" stroke="rgba(187,225,250,0.3)" />
+            <ReferenceLine x="1588334400" stroke="rgba(187,225,250,0.3)" />
+            <ReferenceLine x="1591012800" stroke="rgba(187,225,250,0.3)" />
+            <ReferenceLine x="1593604800" stroke="rgba(187,225,250,0.3)" />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -116,9 +128,23 @@ const ChartElement = () => {
   );
 };
 
+const customStyle = {
+  width: "180px",
+  height: "fit-content",
+  margin: 0,
+  lineHeight: "12px",
+  border: "0px",
+  backgroundColor: "rgba(255, 255, 255, 0)",
+  padding: "10px"
+};
+
 function formatXAxis(tickItem) {
   // If using moment.js
   return moment(tickItem * 1000).format("MM-DD");
+}
+
+function formatLabel(seconds) {
+  return moment(seconds * 1000).format("YYYY-MM-DD");
 }
 
 export default ChartElement;

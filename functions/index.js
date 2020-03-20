@@ -134,13 +134,13 @@ exports.extractHistory = functions.https.onRequest(async (req, res) => {
 
 exports.newFunction = functions.https.onRequest(async (req, res) => {
   let fromDate = new Date(2020, 2, 14, 22, 0, 0);
-  let toDate = new Date(2020, 3, 14, 23, 5, 0);
+  let toDate = new Date(2020, 2, 14, 15, 5, 0);
   const result = [];
 
   await db
     .collection("history")
-    .where("country", "==", "China")
-    .where("critical", "==", "")
+    .where("country", "==", "Germany")
+    .where("time", "==", "0")
     .get()
     .then(querySnapshot => {
       querySnapshot.forEach(documentSnapshot => {
@@ -148,7 +148,7 @@ exports.newFunction = functions.https.onRequest(async (req, res) => {
         const id = documentSnapshot.id;
         result.push({ id: id, country: data.country });
         // do something with the data of each document.
-        console.log(id);
+        console.log(id, data.time);
         // documentSnapshot.delete();
       });
     })
@@ -158,8 +158,8 @@ exports.newFunction = functions.https.onRequest(async (req, res) => {
 
   const count = result.length;
   // const newResult = result.filter(entry => entry.country === "Total");
-  //res.send({ count });
-
+  res.send({ count });
+  /*
   result.forEach(toRemove => {
     db.collection("history")
       .doc(toRemove.id)
@@ -173,6 +173,7 @@ exports.newFunction = functions.https.onRequest(async (req, res) => {
   });
 
   res.send({ docDeleted: count });
+  */
 });
 
 //exports.scrapeAndUpdateData = functions.https.onRequest(async (req, res) => {
@@ -297,449 +298,6 @@ const fetchData = async () => {
   cheerioTableparser($);
   return $("#main_table_countries_today").parsetable(true, true, true);
 };
-
-const currHistory = [
-  {
-    cases: "571",
-    country: "China",
-    critical: "",
-    deaths: "17",
-    recovered: "0",
-    time: "2020-01-22T12:00:00"
-  },
-  {
-    cases: "830",
-    country: "China",
-    critical: "",
-    deaths: "25",
-    recovered: "34",
-    time: "2020-01-23T12:00:00"
-  },
-  {
-    cases: "1.287",
-    country: "China",
-    critical: "",
-    deaths: "41",
-    recovered: "38",
-    time: "2020-01-24T12:00:00"
-  },
-  {
-    cases: "1.975",
-    country: "China",
-    critical: "",
-    deaths: "56",
-    recovered: "49",
-    time: "2020-01-25T12:00:00"
-  },
-  {
-    cases: "2.744",
-    country: "China",
-    critical: "",
-    deaths: "80",
-    recovered: "51",
-    time: "2020-01-26T12:00:00"
-  },
-  {
-    cases: "4.515",
-    country: "China",
-    critical: "",
-    deaths: "106",
-    recovered: "60",
-    time: "2020-01-27T12:00:00"
-  },
-  {
-    cases: "5.974",
-    country: "China",
-    critical: "",
-    deaths: "132",
-    recovered: "103",
-    time: "2020-01-28T12:00:00"
-  },
-  {
-    cases: "7.711",
-    country: "China",
-    critical: "",
-    deaths: "170",
-    recovered: "124",
-    time: "2020-01-29T12:00:00"
-  },
-  {
-    cases: "9.692",
-    country: "China",
-    critical: "",
-    deaths: "213",
-    recovered: "171",
-    time: "2020-01-30T12:00:00"
-  },
-  {
-    cases: "11.791",
-    country: "China",
-    critical: "",
-    deaths: "259",
-    recovered: "243",
-    time: "2020-01-31T12:00:00"
-  },
-  {
-    cases: "14,380",
-    country: "China",
-    critical: "",
-    deaths: "304",
-    recovered: "328",
-    time: "2020-02-01T12:00:00"
-  },
-  {
-    cases: "17.205",
-    country: "China",
-    critical: "",
-    deaths: "361",
-    recovered: "475",
-    time: "2020-02-02T12:00:00"
-  },
-  {
-    cases: "20,440",
-    country: "China",
-    critical: "",
-    deaths: "425",
-    recovered: "632",
-    time: "2020-02-03T12:00:00"
-  },
-  {
-    cases: "24.324",
-    country: "China",
-    critical: "",
-    deaths: "490",
-    recovered: "892",
-    time: "2020-02-04T12:00:00"
-  },
-  {
-    cases: "28.018",
-    country: "China",
-    critical: "",
-    deaths: "563",
-    recovered: "1,153",
-    time: "2020-02-05T12:00:00"
-  },
-  {
-    cases: "31.161",
-    country: "China",
-    critical: "",
-    deaths: "636",
-    recovered: "1,540",
-    time: "2020-02-06T12:00:00"
-  },
-  {
-    cases: "34.546",
-    country: "China",
-    critical: "",
-    deaths: "722",
-    recovered: "2,050",
-    time: "2020-02-07T12:00:00"
-  },
-  {
-    cases: "37.198",
-    country: "China",
-    critical: "",
-    deaths: "811",
-    recovered: "2,649",
-    time: "2020-02-08T12:00:00"
-  },
-  {
-    cases: "40.171",
-    country: "China",
-    critical: "",
-    deaths: "908",
-    recovered: "3,281",
-    time: "2020-02-09T12:00:00"
-  },
-  {
-    cases: "42.638",
-    country: "China",
-    critical: "",
-    deaths: "1.016",
-    recovered: "3,996",
-    time: "2020-02-10T12:00:00"
-  },
-  {
-    cases: "44.653",
-    country: "China",
-    critical: "",
-    deaths: "1.113",
-    recovered: "4,749",
-    time: "2020-02-11T12:00:00"
-  },
-  {
-    cases: "58.761",
-    country: "China",
-    critical: "",
-    deaths: "1.259",
-    recovered: "5,911",
-    time: "2020-02-12T12:00:00"
-  },
-  {
-    cases: "63.851",
-    country: "China",
-    critical: "",
-    deaths: "1,380",
-    recovered: "6,723",
-    time: "2020-02-13T12:00:00"
-  },
-  {
-    cases: "66.492",
-    country: "China",
-    critical: "",
-    deaths: "1,523",
-    recovered: "8,096",
-    time: "2020-02-14T12:00:00"
-  },
-  {
-    cases: "68,500",
-    country: "China",
-    critical: "",
-    deaths: "1,665",
-    recovered: "9,419",
-    time: "2020-02-15T12:00:00"
-  },
-  {
-    cases: "70,548",
-    country: "China",
-    critical: "",
-    deaths: "1,770",
-    recovered: "10,844",
-    time: "2020-02-16T12:00:00"
-  },
-  {
-    cases: "72,436",
-    country: "China",
-    critical: "",
-    deaths: "1,868",
-    recovered: "12,552",
-    time: "2020-02-17T12:00:00"
-  },
-  {
-    cases: "74,185",
-    country: "China",
-    critical: "",
-    deaths: "2,004",
-    recovered: "14,376",
-    time: "2020-02-18T12:00:00"
-  },
-  {
-    cases: "74,576",
-    country: "China",
-    critical: "",
-    deaths: "2,118",
-    recovered: "16,157",
-    time: "2020-02-19T12:00:00"
-  },
-  {
-    cases: "75,465",
-    country: "China",
-    critical: "",
-    deaths: "2,236",
-    recovered: "18,308",
-    time: "2020-02-20T12:00:00"
-  },
-  {
-    cases: "76,288",
-    country: "China",
-    critical: "",
-    deaths: "2,345",
-    recovered: "20,659",
-    time: "2020-02-21T12:00:00"
-  },
-  {
-    cases: "76,936",
-    country: "China",
-    critical: "",
-    deaths: "2,442",
-    recovered: "22,401",
-    time: "2020-02-22T12:00:00"
-  },
-  {
-    cases: "77,150",
-    country: "China",
-    critical: "",
-    deaths: "2,592",
-    recovered: "24,734",
-    time: "2020-02-23T12:00:00"
-  },
-  {
-    cases: "77,658",
-    country: "China",
-    critical: "",
-    deaths: "2,663",
-    recovered: "27,230",
-    time: "2020-02-24T12:00:00"
-  },
-  {
-    cases: "78,064",
-    country: "China",
-    critical: "",
-    deaths: "2,715",
-    recovered: "29,749",
-    time: "2020-02-25T12:00:00"
-  },
-  {
-    cases: "78,497",
-    country: "China",
-    critical: "",
-    deaths: "2,744",
-    recovered: "32,495",
-    time: "2020-02-26T12:00:00"
-  },
-  {
-    cases: "78,824",
-    country: "China",
-    critical: "",
-    deaths: "2,788",
-    recovered: "36,117",
-    time: "2020-02-27T12:00:00"
-  },
-  {
-    cases: "79,251",
-    country: "China",
-    critical: "",
-    deaths: "2,835",
-    recovered: "39,002",
-    time: "2020-02-28T12:00:00"
-  },
-  {
-    cases: "79,824",
-    country: "China",
-    critical: "",
-    deaths: "2,870",
-    recovered: "41,825",
-    time: "2020-02-29T12:00:00"
-  },
-  {
-    cases: "80,026",
-    country: "China",
-    critical: "",
-    deaths: "2,912",
-    recovered: "44,498",
-    time: "2020-03-01T12:00:00"
-  },
-  {
-    cases: "80,151",
-    country: "China",
-    critical: "",
-    deaths: "2,943",
-    recovered: "47,204",
-    time: "2020-03-02T12:00:00"
-  },
-  {
-    cases: "80,270",
-    country: "China",
-    critical: "",
-    deaths: "2,981",
-    recovered: "49,866",
-    time: "2020-03-03T12:00:00"
-  },
-  {
-    cases: "80,409",
-    country: "China",
-    critical: "",
-    deaths: "3,012",
-    recovered: "52,044",
-    time: "2020-03-04T12:00:00"
-  },
-  {
-    cases: "80,522",
-    country: "China",
-    critical: "",
-    deaths: "3,042",
-    recovered: "53,726",
-    time: "2020-03-05T12:00:00"
-  },
-  {
-    cases: "80,651",
-    country: "China",
-    critical: "",
-    deaths: "3,070",
-    recovered: "55,402",
-    time: "2020-03-06T12:00:00"
-  },
-  {
-    cases: "80,695",
-    country: "China",
-    critical: "",
-    deaths: "3,097",
-    recovered: "57,065",
-    time: "2020-03-07T12:00:00"
-  },
-  {
-    cases: "80,735",
-    country: "China",
-    critical: "",
-    deaths: "3,119",
-    recovered: "58,600",
-    time: "2020-03-08T12:00:00"
-  },
-  {
-    cases: "80,754",
-    country: "China",
-    critical: "",
-    deaths: "3,136",
-    recovered: "59,897",
-    time: "2020-03-09T12:00:00"
-  },
-  {
-    cases: "80,778",
-    country: "China",
-    critical: "",
-    deaths: "3,158",
-    recovered: "61,484",
-    time: "2020-03-10T12:00:00"
-  },
-  {
-    cases: "80,793",
-    country: "China",
-    critical: "",
-    deaths: "3,169",
-    recovered: "62,793",
-    time: "2020-03-11T12:00:00"
-  },
-  {
-    cases: "80,813",
-    country: "China",
-    critical: "",
-    deaths: "3,176",
-    recovered: "64,113",
-    time: "2020-03-12T12:00:00"
-  },
-  {
-    cases: "80,824",
-    country: "China",
-    critical: "",
-    deaths: "3,189",
-    recovered: "65,547",
-    time: "2020-03-13T12:00:00"
-  },
-  {
-    cases: "80,844",
-    country: "China",
-    critical: "",
-    deaths: "3,199",
-    recovered: "66,912",
-    time: "2020-03-14T12:00:00"
-  },
-  {
-    cases: "80,860",
-    country: "China",
-    critical: "",
-    deaths: "3,213",
-    recovered: "67,754",
-    time: "2020-03-15T12:00:00"
-  },
-  {
-    cases: "80,881",
-    country: "China",
-    critical: "",
-    deaths: "3,226",
-    recovered: "68,688",
-    time: "2020-03-16T12:00:00"
-  }
-];
 
 const countries = {
   //not verified
@@ -967,3 +525,430 @@ const countries = {
   Togo: "Togo",
   "U.S. Virgin Islands": "U.S. Virgin Islands"
 };
+
+const currHistory = [
+  {
+    cases: "580",
+    country: "Total",
+    critical: "0",
+    deaths: "17",
+    recovered: "0",
+    time: "2020-01-22T12:00:00"
+  },
+  {
+    cases: "845",
+    country: "Total",
+    critical: "0",
+    deaths: "25",
+    recovered: "0",
+    time: "2020-01-23T12:00:00"
+  },
+  {
+    cases: "1,317",
+    country: "Total",
+    critical: "0",
+    deaths: "41",
+    recovered: "0",
+    time: "2020-01-24T12:00:00"
+  },
+  {
+    cases: "2,015",
+    country: "Total",
+    critical: "0",
+    deaths: "56",
+    recovered: "0",
+    time: "2020-01-25T12:00:00"
+  },
+  {
+    cases: "2,800",
+    country: "Total",
+    critical: "0",
+    deaths: "80",
+    recovered: "0",
+    time: "2020-01-26T12:00:00"
+  },
+  {
+    cases: "4,581",
+    country: "Total",
+    critical: "0",
+    deaths: "106",
+    recovered: "0",
+    time: "2020-01-27T12:00:00"
+  },
+  {
+    cases: "6,058",
+    country: "Total",
+    critical: "0",
+    deaths: "132",
+    recovered: "0",
+    time: "2020-01-28T12:00:00"
+  },
+  {
+    cases: "7,813",
+    country: "Total",
+    critical: "0",
+    deaths: "170",
+    recovered: "0",
+    time: "2020-01-29T12:00:00"
+  },
+  {
+    cases: "9,823",
+    country: "Total",
+    critical: "0",
+    deaths: "213",
+    recovered: "0",
+    time: "2020-01-30T12:00:00"
+  },
+  {
+    cases: "11,950",
+    country: "Total",
+    critical: "0",
+    deaths: "259",
+    recovered: "0",
+    time: "2020-01-31T12:00:00"
+  },
+  {
+    cases: "14,553",
+    country: "Total",
+    critical: "0",
+    deaths: "304",
+    recovered: "0",
+    time: "2020-02-01T12:00:00"
+  },
+  {
+    cases: "17,391",
+    country: "Total",
+    critical: "2,298",
+    deaths: "362",
+    recovered: "504",
+    time: "2020-02-02T12:00:00"
+  },
+  {
+    cases: "20,630",
+    country: "Total",
+    critical: "2,790",
+    deaths: "426",
+    recovered: "643",
+    time: "2020-02-03T12:00:00"
+  },
+  {
+    cases: "24,545",
+    country: "Total",
+    critical: "3,223",
+    deaths: "492",
+    recovered: "907",
+    time: "2020-02-04T12:00:00"
+  },
+  {
+    cases: "28,266",
+    country: "Total",
+    critical: "3,863",
+    deaths: "565",
+    recovered: "1,173",
+    time: "2020-02-05T12:00:00"
+  },
+  {
+    cases: "31,429",
+    country: "Total",
+    critical: "4,825",
+    deaths: "638",
+    recovered: "1,562",
+    time: "2020-02-06T12:00:00"
+  },
+  {
+    cases: "34,876",
+    country: "Total",
+    critical: "6,106",
+    deaths: "724",
+    recovered: "2,083",
+    time: "2020-02-07T12:00:00"
+  },
+  {
+    cases: "37,552",
+    country: "Total",
+    critical: "6,196",
+    deaths: "813",
+    recovered: "2,684",
+    time: "2020-02-08T12:00:00"
+  },
+  {
+    cases: "40,553",
+    country: "Total",
+    critical: "6,494",
+    deaths: "910",
+    recovered: "3,323",
+    time: "2020-02-09T12:00:00"
+  },
+  {
+    cases: "43,099",
+    country: "Total",
+    critical: "7,344",
+    deaths: "1,018",
+    recovered: "4,043",
+    time: "2020-02-10T12:00:00"
+  },
+  {
+    cases: "45,134",
+    country: "Total",
+    critical: "8,216",
+    deaths: "1,115",
+    recovered: "4,803",
+    time: "2020-02-11T12:00:00"
+  },
+  {
+    cases: "59,287",
+    country: "Total",
+    critical: "8,049",
+    deaths: "1,261",
+    recovered: "5,987",
+    time: "2020-02-12T12:00:00"
+  },
+  {
+    cases: "64,438",
+    country: "Total",
+    critical: "10,228",
+    deaths: "1,383",
+    recovered: "6,808",
+    time: "2020-02-13T12:00:00"
+  },
+  {
+    cases: "67,100",
+    country: "Total",
+    critical: "11,082",
+    deaths: "1,526",
+    recovered: "8,196",
+    time: "2020-02-14T12:00:00"
+  },
+  {
+    cases: "69,197",
+    country: "Total",
+    critical: "11,299",
+    deaths: "1,669",
+    recovered: "9,538",
+    time: "2020-02-15T12:00:00"
+  },
+  {
+    cases: "71,329",
+    country: "Total",
+    critical: "10,670",
+    deaths: "1,775",
+    recovered: "10,973",
+    time: "2020-02-16T12:00:00"
+  },
+  {
+    cases: "73,332",
+    country: "Total",
+    critical: "11,795",
+    deaths: "1,873",
+    recovered: "12,712",
+    time: "2020-02-17T12:00:00"
+  },
+  {
+    cases: "75,184",
+    country: "Total",
+    critical: "12,057",
+    deaths: "2,009",
+    recovered: "14,553",
+    time: "2020-02-18T12:00:00"
+  },
+  {
+    cases: "75,700",
+    country: "Total",
+    critical: "11,911",
+    deaths: "2,126",
+    recovered: "16,357",
+    time: "2020-02-19T12:00:00"
+  },
+  {
+    cases: "76,677",
+    country: "Total",
+    critical: "11,681",
+    deaths: "2,247",
+    recovered: "18,524",
+    time: "2020-02-20T12:00:00"
+  },
+  {
+    cases: "77,673",
+    country: "Total",
+    critical: "11,531",
+    deaths: "2,360",
+    recovered: "20,895",
+    time: "2020-02-21T12:00:00"
+  },
+  {
+    cases: "78,651",
+    country: "Total",
+    critical: "11,553",
+    deaths: "2,460",
+    recovered: "22,650",
+    time: "2020-02-22T12:00:00"
+  },
+  {
+    cases: "79,205",
+    country: "Total",
+    critical: "10,007",
+    deaths: "2,618",
+    recovered: "24,991",
+    time: "2020-02-23T12:00:00"
+  },
+  {
+    cases: "80,087",
+    country: "Total",
+    critical: "9,216",
+    deaths: "2,699",
+    recovered: "27,466",
+    time: "2020-02-24T12:00:00"
+  },
+  {
+    cases: "80,828",
+    country: "Total",
+    critical: "8,839",
+    deaths: "2,763",
+    recovered: "30,051",
+    time: "2020-02-25T12:00:00"
+  },
+  {
+    cases: "81,820",
+    country: "Total",
+    critical: "8,469",
+    deaths: "2,800",
+    recovered: "32,805",
+    time: "2020-02-26T12:00:00"
+  },
+  {
+    cases: "83,112",
+    country: "Total",
+    critical: "8,100",
+    deaths: "2,858",
+    recovered: "36,520",
+    time: "2020-02-27T12:00:00"
+  },
+  {
+    cases: "84,615",
+    country: "Total",
+    critical: "7,816",
+    deaths: "2,923",
+    recovered: "39,430",
+    time: "2020-02-28T12:00:00"
+  },
+  {
+    cases: "86,604",
+    country: "Total",
+    critical: "7,570",
+    deaths: "2,977",
+    recovered: "42,330",
+    time: "2020-02-29T12:00:00"
+  },
+  {
+    cases: "88,585",
+    country: "Total",
+    critical: "7,375",
+    deaths: "3,050",
+    recovered: "45,122",
+    time: "2020-03-01T12:00:00"
+  },
+  {
+    cases: "90,443",
+    country: "Total",
+    critical: "7,094",
+    deaths: "3,117",
+    recovered: "48,108",
+    time: "2020-03-02T12:00:00"
+  },
+  {
+    cases: "93,016",
+    country: "Total",
+    critical: "6,771",
+    deaths: "3,202",
+    recovered: "50,944",
+    time: "2020-03-03T12:00:00"
+  },
+  {
+    cases: "95,314",
+    country: "Total",
+    critical: "6,420",
+    deaths: "3,285",
+    recovered: "53,524",
+    time: "2020-03-04T12:00:00"
+  },
+  {
+    cases: "98,425",
+    country: "Total",
+    critical: "6,272",
+    deaths: "3,387",
+    recovered: "55,605",
+    time: "2020-03-05T12:00:00"
+  },
+  {
+    cases: "102,050",
+    country: "Total",
+    critical: "6,401",
+    deaths: "3,494",
+    recovered: "57,609",
+    time: "2020-03-06T12:00:00"
+  },
+  {
+    cases: "106,099",
+    country: "Total",
+    critical: "6,035",
+    deaths: "3,599",
+    recovered: "60,172",
+    time: "2020-03-07T12:00:00"
+  },
+  {
+    cases: "109,991",
+    country: "Total",
+    critical: "5,977",
+    deaths: "3,827",
+    recovered: "62,278",
+    time: "2020-03-08T12:00:00"
+  },
+  {
+    cases: "114,381",
+    country: "Total",
+    critical: "5,772",
+    deaths: "4,025",
+    recovered: "64,056",
+    time: "2020-03-09T12:00:00"
+  },
+  {
+    cases: "118,948",
+    country: "Total",
+    critical: "5,748",
+    deaths: "4,296",
+    recovered: "66,621",
+    time: "2020-03-10T12:00:00"
+  },
+  {
+    cases: "126,214",
+    country: "Total",
+    critical: "5,707",
+    deaths: "4,628",
+    recovered: "68,307",
+    time: "2020-03-11T12:00:00"
+  },
+  {
+    cases: "134,576",
+    country: "Total",
+    critical: "5,958",
+    deaths: "4,981",
+    recovered: "70,383",
+    time: "2020-03-12T12:00:00"
+  },
+  {
+    cases: "145,483",
+    country: "Total",
+    critical: "6,082",
+    deaths: "5,429",
+    recovered: "72,607",
+    time: "2020-03-13T12:00:00"
+  },
+  {
+    cases: "156,653",
+    country: "Total",
+    critical: "5,652",
+    deaths: "5,833",
+    recovered: "75,932",
+    time: "2020-03-14T12:00:00"
+  }
+];
