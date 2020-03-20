@@ -40,9 +40,15 @@ const ChartElement = () => {
     });
     return sorted.map(entry => ({
       cases: convertToInt(entry.cases),
-      deaths: convertToInt(entry.deaths),
-      ...(entry.critical !== "" && { critical: convertToInt(entry.critical) }),
-      recovered: convertToInt(entry.recovered),
+      ...(convertToInt(entry.deaths) !== 0 && {
+        deaths: convertToInt(entry.deaths)
+      }),
+      ...(convertToInt(entry.critical) !== 0 && {
+        critical: convertToInt(entry.critical)
+      }),
+      ...(convertToInt(entry.recovered) !== 0 && {
+        recovered: convertToInt(entry.recovered)
+      }),
       date: entry.time.seconds
     }));
   });
