@@ -1,0 +1,9 @@
+.scopeWrapper {
+  margin-left: 20px;
+}
+
+@media screen and (max-width: 520px) {
+  .scopeWrapper {
+    margin-left: 0px;
+  }
+}

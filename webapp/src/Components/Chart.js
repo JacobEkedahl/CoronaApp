@@ -17,8 +17,13 @@ import {
 import { compose } from "redux";
 import { TOGGLE_CHART } from "../actions/tableActions";
 import { getCurrentSelected } from "../reducers/latestValues";
-import { getCanShowChart, getIsMinimized } from "../reducers/tableReducer";
+import {
+  getCanShowChart,
+  getChartScope,
+  getIsMinimized
+} from "../reducers/tableReducer";
 import "./Chart.css";
+import ChartScope from "./ChartScope";
 const myProjectsReduxName = "selectedHistory";
 
 const convertToInt = entry => {
@@ -53,6 +58,7 @@ const ChartElement = () => {
     }));
   });
   const canShow = useSelector(state => getCanShowChart(state));
+  const scope = useSelector(state => getChartScope(state));
 
   if (!currentSelected) {
     return null;
@@ -73,6 +79,7 @@ const ChartElement = () => {
         <DummyElement country={currentSelected} />
         <div className="headerContainer">
           <h2 style={{ paddingLeft: 10 }}>{currentSelected}</h2>
+          <ChartScope />
           <div
             className="minimize"
             onClick={() => dispatch({ type: TOGGLE_CHART, payload: false })}
@@ -81,7 +88,10 @@ const ChartElement = () => {
           </div>
         </div>
         <ResponsiveContainer>
-          <LineChart data={selectedHistory} margin={{ bottom: 20 }}>
+          <LineChart
+            data={filterOutData(selectedHistory, scope)}
+            margin={{ bottom: 20 }}
+          >
             <Line
               type="monotone"
               dataKey="cases"
@@ -110,7 +120,7 @@ const ChartElement = () => {
               dataKey="date"
               type="number"
               tickFormatter={formatXAxis}
-              domain={[1583082945, "dataMax"]}
+              domain={["dataMin", "dataMax"]}
               allowDuplicatedCategory={false}
               padding={{ right: 25 }}
             />
@@ -134,6 +144,25 @@ const ChartElement = () => {
     </div>
   );
 };
+
+const filterOutData = (selectedHistory, scope) => {
+  var d = new Date();
+  switch (scope) {
+    case "1W":
+      d.setDate(d.getDate() - 7);
+      d.setHours(0, 0, 0);
+      return filterData(selectedHistory, d / 1000);
+    case "1M":
+      d.setMonth(d.getMonth() - 1);
+      d.setHours(0, 0, 0);
+      return filterData(selectedHistory, d / 1000);
+    default:
+      return selectedHistory;
+  }
+};
+
+const filterData = (selectedHistory, timeLimitSeconds) =>
+  selectedHistory.filter(entry => entry.date >= timeLimitSeconds);
 
 const customStyle = {
   width: "180px",
