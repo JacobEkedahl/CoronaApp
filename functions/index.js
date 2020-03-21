@@ -528,235 +528,155 @@ const countries = {
 
 const currHistory = [
   {
-    cases: "28",
-    country: "S. Korea",
+    cases: "1",
+    country: "Algeria",
     critical: "",
     deaths: "0",
     recovered: "0",
-    time: "2020-02-15T12:00:00"
-  },
-  {
-    cases: "29",
-    country: "S. Korea",
-    critical: "",
-    deaths: "0",
-    recovered: "0",
-    time: "2020-02-16T12:00:00"
-  },
-  {
-    cases: "30",
-    country: "S. Korea",
-    critical: "",
-    deaths: "0",
-    recovered: "1",
-    time: "2020-02-17T12:00:00"
-  },
-  {
-    cases: "31",
-    country: "S. Korea",
-    critical: "",
-    deaths: "0",
-    recovered: "3",
-    time: "2020-02-18T12:00:00"
-  },
-  {
-    cases: "58",
-    country: "S. Korea",
-    critical: "",
-    deaths: "0",
-    recovered: "7",
-    time: "2020-02-19T12:00:00"
-  },
-  {
-    cases: "111",
-    country: "S. Korea",
-    critical: "",
-    deaths: "1",
-    recovered: "7",
-    time: "2020-02-20T12:00:00"
-  },
-  {
-    cases: "209",
-    country: "S. Korea",
-    critical: "",
-    deaths: "2",
-    recovered: "8",
-    time: "2020-02-21T12:00:00"
-  },
-  {
-    cases: "436",
-    country: "S. Korea",
-    critical: "",
-    deaths: "2",
-    recovered: "9",
-    time: "2020-02-22T12:00:00"
-  },
-  {
-    cases: "602",
-    country: "S. Korea",
-    critical: "",
-    deaths: "6",
-    recovered: "9",
-    time: "2020-02-23T12:00:00"
-  },
-  {
-    cases: "833",
-    country: "S. Korea",
-    critical: "",
-    deaths: "8",
-    recovered: "13",
-    time: "2020-02-24T12:00:00"
-  },
-  {
-    cases: "977",
-    country: "S. Korea",
-    critical: "",
-    deaths: "11",
-    recovered: "13",
     time: "2020-02-25T12:00:00"
   },
   {
-    cases: "1,261",
-    country: "S. Korea",
+    cases: "1",
+    country: "Algeria",
     critical: "",
-    deaths: "12",
-    recovered: "15",
+    deaths: "0",
+    recovered: "0",
     time: "2020-02-26T12:00:00"
   },
   {
-    cases: "1,766",
-    country: "S. Korea",
+    cases: "1",
+    country: "Algeria",
     critical: "",
-    deaths: "13",
-    recovered: "15",
+    deaths: "0",
+    recovered: "0",
     time: "2020-02-27T12:00:00"
   },
   {
-    cases: "2,337",
-    country: "S. Korea",
+    cases: "1",
+    country: "Algeria",
     critical: "",
-    deaths: "16",
-    recovered: "15",
+    deaths: "0",
+    recovered: "0",
     time: "2020-02-28T12:00:00"
   },
   {
-    cases: "3,150",
-    country: "S. Korea",
+    cases: "1",
+    country: "Algeria",
     critical: "",
-    deaths: "17",
-    recovered: "15",
+    deaths: "0",
+    recovered: "0",
     time: "2020-02-29T12:00:00"
   },
   {
-    cases: "3,736",
-    country: "S. Korea",
+    cases: "3",
+    country: "Algeria",
     critical: "",
-    deaths: "21",
-    recovered: "21",
+    deaths: "0",
+    recovered: "0",
     time: "2020-03-01T12:00:00"
   },
   {
-    cases: "4,335",
-    country: "S. Korea",
+    cases: "5",
+    country: "Algeria",
     critical: "",
-    deaths: "28",
-    recovered: "21",
+    deaths: "0",
+    recovered: "0",
     time: "2020-03-02T12:00:00"
   },
   {
-    cases: "5,186",
-    country: "S. Korea",
+    cases: "8",
+    country: "Algeria",
     critical: "",
-    deaths: "32",
-    recovered: "25",
+    deaths: "0",
+    recovered: "0",
     time: "2020-03-03T12:00:00"
   },
   {
-    cases: "5,621",
-    country: "S. Korea",
+    cases: "17",
+    country: "Algeria",
     critical: "",
-    deaths: "35",
-    recovered: "79",
+    deaths: "0",
+    recovered: "0",
     time: "2020-03-04T12:00:00"
   },
   {
-    cases: "6,284",
-    country: "S. Korea",
+    cases: "17",
+    country: "Algeria",
     critical: "",
-    deaths: "42",
-    recovered: "126",
+    deaths: "0",
+    recovered: "0",
     time: "2020-03-05T12:00:00"
   },
   {
-    cases: "6,593",
-    country: "S. Korea",
+    cases: "17",
+    country: "Algeria",
     critical: "",
-    deaths: "43",
-    recovered: "126",
+    deaths: "0",
+    recovered: "0",
     time: "2020-03-06T12:00:00"
   },
   {
-    cases: "7,041",
-    country: "S. Korea",
+    cases: "19",
+    country: "Algeria",
     critical: "",
-    deaths: "48",
-    recovered: "109",
+    deaths: "0",
+    recovered: "0",
     time: "2020-03-07T12:00:00"
   },
   {
-    cases: "7,313",
-    country: "S. Korea",
+    cases: "20",
+    country: "Algeria",
     critical: "",
-    deaths: "50",
-    recovered: "157",
+    deaths: "0",
+    recovered: "0",
     time: "2020-03-08T12:00:00"
   },
   {
-    cases: "7,478",
-    country: "S. Korea",
+    cases: "20",
+    country: "Algeria",
     critical: "",
-    deaths: "53",
-    recovered: "238",
+    deaths: "0",
+    recovered: "0",
     time: "2020-03-09T12:00:00"
   },
   {
-    cases: "7,513",
-    country: "S. Korea",
+    cases: "20",
+    country: "Algeria",
     critical: "",
-    deaths: "60",
-    recovered: "279",
+    deaths: "0",
+    recovered: "8",
     time: "2020-03-10T12:00:00"
   },
   {
-    cases: "7,755",
-    country: "S. Korea",
+    cases: "20",
+    country: "Algeria",
     critical: "",
-    deaths: "60",
-    recovered: "324",
+    deaths: "0",
+    recovered: "10",
     time: "2020-03-11T12:00:00"
   },
   {
-    cases: "7,869",
-    country: "S. Korea",
+    cases: "26",
+    country: "Algeria",
     critical: "",
-    deaths: "66",
-    recovered: "501",
+    deaths: "2",
+    recovered: "10",
     time: "2020-03-12T12:00:00"
   },
   {
-    cases: "7,979",
-    country: "S. Korea",
+    cases: "26",
+    country: "Algeria",
     critical: "",
-    deaths: "67",
-    recovered: "705",
+    deaths: "2",
+    recovered: "32",
     time: "2020-03-13T12:00:00"
   },
   {
-    cases: "8,086",
-    country: "S. Korea",
+    cases: "39",
+    country: "Algeria",
     critical: "",
-    deaths: "72",
-    recovered: "825",
+    deaths: "3",
+    recovered: "32",
     time: "2020-03-14T12:00:00"
   }
 ];

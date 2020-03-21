@@ -81,7 +81,7 @@ const ChartElement = () => {
           </div>
         </div>
         <ResponsiveContainer>
-          <LineChart data={selectedHistory} margin={{ right: 20 }}>
+          <LineChart data={selectedHistory} margin={{ bottom: 20 }}>
             <Line
               type="monotone"
               dataKey="cases"
@@ -112,6 +112,7 @@ const ChartElement = () => {
               tickFormatter={formatXAxis}
               domain={[1583082945, "dataMax"]}
               allowDuplicatedCategory={false}
+              padding={{ right: 25 }}
             />
             <YAxis />
             <Legend />
