@@ -19,5 +19,19 @@
     "pubsub": {
       "port": 8085
     }
+  },
+  "hosting": {
+    "public": "webapp/build",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   }
 }

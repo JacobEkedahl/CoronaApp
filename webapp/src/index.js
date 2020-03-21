@@ -3,7 +3,7 @@ import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
-import React from "react";
+import React, { useState } from "react";
 import { render } from "react-dom";
 import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
@@ -23,16 +23,19 @@ const darkTheme = createMuiTheme({
   }
 });
 
+let show = false;
+
 // Initialize Firebase instance
 firebase.initializeApp(config.fbConfig);
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
 const styles = {
   textAlign: "left"
 };
 
-const store = createStore();
-
-function App() {
+const App = () => {
+  const store = createStore();
+  console.log(show);
   return (
     <Provider store={store}>
       <ReactReduxFirebaseProvider
@@ -61,8 +64,35 @@ function App() {
       </ReactReduxFirebaseProvider>
     </Provider>
   );
-}
+};
 
-render(<App />, document.getElementById("root"));
+const AuthMiddleware = () => {
+  const [isLoggedIn, setLoggedIn] = useState(false);
+
+  if (!isLoggedIn) {
+    var user = firebase.auth().currentUser;
+    if (!user) {
+      firebase
+        .auth()
+        .signInAnonymously()
+        .then(() => {
+          setLoggedIn(true);
+        });
+    } else {
+      setLoggedIn(true);
+    }
+  }
+
+  return isLoggedIn ? (
+    <App />
+  ) : (
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <div style={{ width: 400, height: 400 }}></div>
+    </ThemeProvider>
+  );
+};
+
+render(<AuthMiddleware />, document.getElementById("root"));
 
 registerServiceWorker();
