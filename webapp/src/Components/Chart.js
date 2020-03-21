@@ -120,7 +120,7 @@ const ChartElement = () => {
               dataKey="date"
               type="number"
               tickFormatter={formatXAxis}
-              domain={["dataMin", "dataMax"]}
+              domain={[getMinTime(scope), "dataMax"]}
               allowDuplicatedCategory={false}
               padding={{ right: 25 }}
             />
@@ -143,6 +143,22 @@ const ChartElement = () => {
       </div>
     </div>
   );
+};
+
+const getMinTime = scope => {
+  var d = new Date();
+  switch (scope) {
+    case "1W":
+      d.setDate(d.getDate() - 7);
+      d.setHours(0, 0, 0);
+      return d / 1000;
+    case "1M":
+      d.setMonth(d.getMonth() - 1);
+      d.setHours(0, 0, 0);
+      return d / 1000;
+    default:
+      return "dataMin";
+  }
 };
 
 const filterOutData = (selectedHistory, scope) => {
