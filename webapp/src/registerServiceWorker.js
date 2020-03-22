@@ -8,37 +8,6 @@
 // To learn more about the benefits of this model, read https://goo.gl/KwvDNy.
 // This link also includes instructions on opting out of this behavior.
 
-import firebase from "firebase/app";
-/*import * as config from "./config";
-firebase.initializeApp(config.fbConfig);
-firebase.auth().signInAnonymously();
-*/
-
-/**
- * Returns a promise that resolves with an ID token if available.
- * @return {!Promise<?string>} The promise that resolves with an ID token if
- *     available. Otherwise, the promise resolves with null.
- */
-const getIdToken = () => {
-  return new Promise((resolve, reject) => {
-    const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-      unsubscribe();
-      if (user) {
-        user.getIdToken().then(
-          idToken => {
-            resolve(idToken);
-          },
-          error => {
-            resolve(null);
-          }
-        );
-      } else {
-        resolve(null);
-      }
-    });
-  });
-};
-
 const isLocalhost = Boolean(
   window.location.hostname === "localhost" ||
     // [::1] is the IPv6 localhost address.
@@ -75,34 +44,32 @@ export default function register() {
 }
 
 function registerValidSW(swUrl) {
-  getIdToken().then(() => {
-    navigator.serviceWorker
-      .register(swUrl)
-      .then(registration => {
-        registration.onupdatefound = () => {
-          const installingWorker = registration.installing;
-          installingWorker.onstatechange = () => {
-            if (installingWorker.state === "installed") {
-              if (navigator.serviceWorker.controller) {
-                // At this point, the old content will have been purged and
-                // the fresh content will have been added to the cache.
-                // It's the perfect time to display a "New content is
-                // available; please refresh." message in your web app.
-                console.log("New content is available; please refresh.");
-              } else {
-                // At this point, everything has been precached.
-                // It's the perfect time to display a
-                // "Content is cached for offline use." message.
-                console.log("Content is cached for offline use.");
-              }
+  navigator.serviceWorker
+    .register(swUrl)
+    .then(registration => {
+      registration.onupdatefound = () => {
+        const installingWorker = registration.installing;
+        installingWorker.onstatechange = () => {
+          if (installingWorker.state === "installed") {
+            if (navigator.serviceWorker.controller) {
+              // At this point, the old content will have been purged and
+              // the fresh content will have been added to the cache.
+              // It's the perfect time to display a "New content is
+              // available; please refresh." message in your web app.
+              console.log("New content is available; please refresh.");
+            } else {
+              // At this point, everything has been precached.
+              // It's the perfect time to display a
+              // "Content is cached for offline use." message.
+              console.log("Content is cached for offline use.");
             }
-          };
+          }
         };
-      })
-      .catch(error => {
-        console.error("Error during service worker registration:", error);
-      });
-  });
+      };
+    })
+    .catch(error => {
+      console.error("Error during service worker registration:", error);
+    });
 }
 
 function checkValidServiceWorker(swUrl) {

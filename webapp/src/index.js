@@ -1,5 +1,6 @@
 import { CssBaseline } from "@material-ui/core";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import "firebase/analytics";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
@@ -17,6 +18,17 @@ import * as config from "./config";
 import createStore from "./createStore";
 import registerServiceWorker from "./registerServiceWorker";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyAtmYK_5Wvl6pvzEu5BwuUWqi3kg1awLng",
+  authDomain: "corona-live-updates.firebaseapp.com",
+  databaseURL: "https://corona-live-updates.firebaseio.com",
+  projectId: "corona-live-updates",
+  storageBucket: "corona-live-updates.appspot.com",
+  messagingSenderId: "770208119300",
+  appId: "1:770208119300:web:6cdc18adacf346c2eb1351",
+  measurementId: "G-S9GTCFE311"
+};
+
 const darkTheme = createMuiTheme({
   palette: {
     type: "dark"
@@ -26,8 +38,9 @@ const darkTheme = createMuiTheme({
 let show = false;
 
 // Initialize Firebase instance
-firebase.initializeApp(config.fbConfig);
+firebase.initializeApp(firebaseConfig);
 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+firebase.analytics();
 
 const styles = {
   textAlign: "left"

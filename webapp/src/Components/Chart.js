@@ -15,6 +15,7 @@ import {
   YAxis
 } from "recharts";
 import { compose } from "redux";
+import { selectContent } from "../actions/analyticsActions";
 import { TOGGLE_CHART } from "../actions/tableActions";
 import { getCurrentSelected } from "../reducers/latestValues";
 import {
@@ -67,7 +68,10 @@ const ChartElement = () => {
     return (
       <div className="toolbarExpand">
         <InsertChartIcon
-          onClick={() => dispatch({ type: TOGGLE_CHART, payload: true })}
+          onClick={() => {
+            dispatch({ type: TOGGLE_CHART, payload: true });
+            selectContent("show_element", "chart");
+          }}
         />
       </div>
     );
@@ -82,7 +86,10 @@ const ChartElement = () => {
           <ChartScope />
           <div
             className="minimize"
-            onClick={() => dispatch({ type: TOGGLE_CHART, payload: false })}
+            onClick={() => {
+              selectContent("hide_element", "chart");
+              dispatch({ type: TOGGLE_CHART, payload: false });
+            }}
           >
             <MinimizeIcon />
           </div>
@@ -120,7 +127,7 @@ const ChartElement = () => {
               dataKey="date"
               type="number"
               tickFormatter={formatXAxis}
-              domain={[getMinTime(scope), "dataMax"]}
+              domain={[getMinTime(scope), getMaxTime(scope)]}
               allowDuplicatedCategory={false}
               padding={{ right: 25 }}
             />
@@ -143,6 +150,15 @@ const ChartElement = () => {
       </div>
     </div>
   );
+};
+
+const getMaxTime = scope => {
+  var d = new Date();
+  if (scope === "1W" || scope === "1M") {
+    return d / 1000;
+  }
+
+  return "dataMax";
 };
 
 const getMinTime = scope => {

@@ -4,6 +4,7 @@ import { store } from "react-notifications-component";
 import { useDispatch, useSelector } from "react-redux";
 import ReactTable from "react-table-6";
 import "react-table-6/react-table.css";
+import { searchEvent, selectContent } from "../actions/analyticsActions";
 import {
   DONT_SHOW_NOTIFICATIONS,
   SELECTED_COUNTRIES,
@@ -82,6 +83,7 @@ export const TableElement = ({ allValues, newValue }) => {
                 payload: rowInfo.original.country
               });
               dispatch({ type: TOGGLE_CHART, payload: true });
+              selectContent("select_country_table", rowInfo.original.country);
             }
           };
         }}
@@ -120,6 +122,7 @@ export const TableElement = ({ allValues, newValue }) => {
                 size="small"
                 onChange={event => {
                   setSearch(event.target.value);
+                  searchEvent(event.target.value);
                 }}
               />
             ),
