@@ -1,7 +1,7 @@
 export const newCases = (country, numberOfCases) => {
   return {
-    title: `New cases detected in ${country}`,
-    message: `${numberOfCases} new cases of Corona has been discovered in ${country}`,
+    title: "New cases",
+    message: `${numberOfCases} new cases in ${country}`,
     type: "info",
     insert: "top",
     container: "top-left",
@@ -15,8 +15,8 @@ export const newCases = (country, numberOfCases) => {
 
 export const newDeaths = (country, numberOfCases) => {
   return {
-    title: `New deaths detected in ${country}`,
-    message: `${numberOfCases} new deaths from the Corona virus in ${country}`,
+    title: `New deaths`,
+    message: `${numberOfCases} people have died in ${country}`,
     type: "danger",
     insert: "top",
     container: "top-left",
@@ -30,8 +30,8 @@ export const newDeaths = (country, numberOfCases) => {
 
 export const newCritical = (country, numberOfCases) => {
   return {
-    title: `Critical cases detected in ${country}`,
-    message: `${numberOfCases} of persons with Corona virus has moved into a critical state in ${country}`,
+    title: "New critical cases",
+    message: `${numberOfCases} people have moved into a critical state in ${country}`,
     type: "warning",
     insert: "top",
     container: "top-left",
@@ -45,8 +45,8 @@ export const newCritical = (country, numberOfCases) => {
 
 export const newRecovered = (country, numberOfCases) => {
   return {
-    title: `Recoveries in ${country}`,
-    message: `${numberOfCases} persons has recovered from the Corona virus in ${country}`,
+    title: `New recoveries`,
+    message: `${numberOfCases} people has recovered in ${country}`,
     type: "success",
     insert: "top",
     container: "top-left",
