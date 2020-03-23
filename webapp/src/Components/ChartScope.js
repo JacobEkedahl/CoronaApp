@@ -15,7 +15,6 @@ function ChartScope() {
       <Suspense fallback={<Loader />}>
         <Button
           disabled={scope === "1W"}
-          color="primary"
           size="small"
           onClick={() => selectScope(dispatch, "1W")}
         >
@@ -23,7 +22,6 @@ function ChartScope() {
         </Button>
         <Button
           disabled={scope === "1M"}
-          color="primary"
           size="small"
           onClick={() => selectScope(dispatch, "1M")}
         >
@@ -31,7 +29,6 @@ function ChartScope() {
         </Button>
         <Button
           disabled={scope === "ALL"}
-          color="primary"
           size="small"
           onClick={() => selectScope(dispatch, "ALL")}
         >

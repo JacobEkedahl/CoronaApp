@@ -20,7 +20,8 @@
       gtag('config', 'AW-658704320');
     </script>
 
-    <link rel="preconnect" href="https://firebaseinstallations.googleapis.com">
+    <link rel=preload>
+    <link rel="preconnect" href="https://firebaseinstallations.googleapis.com" crossorigin>
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -51,5 +52,11 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    
+    <script> type="text/javascript" 
+      if ('ontouchstart' in document.documentElement) {
+      document.addEventListener('ontouchstart', ontouchstart, true);
+    }
+    </script>
   </body>
 </html>

@@ -7,7 +7,6 @@
     "@material-ui/icons": "^4.9.1",
     "firebase": "^7.11.0",
     "lodash": "^4.17.15",
-    "preact": "^10.3.4",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-google-charts": "^3.0.15",
@@ -18,7 +17,6 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
     "react-table-6": "^6.11.0",
-    "react-window-infinite-loader": "^1.0.5",
     "recharts": "^1.8.5",
     "redux": "^4.0.5",
     "redux-firestore": "^0.13.0",
@@ -44,10 +42,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "envify": "^4.1.0",
-    "terser": "^4.6.7",
-    "uglifyify": "^5.0.2"
   }
 }

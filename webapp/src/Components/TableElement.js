@@ -123,6 +123,7 @@ export const TableElement = ({ allValues, newValue }) => {
                   label="Country"
                   variant="outlined"
                   size="small"
+                  id="countryField"
                   onChange={event => {
                     setSearch(event.target.value);
                     searchEvent(event.target.value);

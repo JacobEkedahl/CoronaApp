@@ -44,11 +44,27 @@
   }
 
   .table {
-    font-size: smaller;
+    font-size: 12px;
+  }
+
+  .MuiFormLabel-root {
+    font-size: 14px!important;
+  }
+
+  .rt-th, .rt-td {
+    width: 80px!important;
+  }
+
+  .rt-thead, .rt-tbody {
+    min-width: 0px!important;
   }
 
   .tableHidden {
     display:flex;
+  }
+
+  .rt-th {
+
   }
 }
 
