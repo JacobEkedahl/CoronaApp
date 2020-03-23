@@ -5,6 +5,7 @@ import { getHasLoaded, getLatestValues } from "../reducers/latestValues";
 import { getIsMinimized } from "../reducers/tableReducer";
 import Chart from "./Chart";
 import HideButton from "./HideButton";
+import Loader from "./Loader";
 import "./MainWindow.css";
 import { TableElement } from "./TableElement";
 
@@ -20,8 +21,8 @@ function MainWindow() {
 
   return (
     <div className={isMinimzed ? "wrapperMinimized" : "wrapper"}>
-      <div className="map">
-        <Suspense fallback={<div>Loading</div>}>
+      <div id="mainMap" className="map">
+        <Suspense fallback={<Loader />}>
           <MapElement latestValues={latestValues.allValues} />
         </Suspense>
       </div>

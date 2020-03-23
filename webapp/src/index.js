@@ -11,6 +11,7 @@ import "react-notifications-component/dist/theme.css";
 import { Provider } from "react-redux";
 import { ReactReduxFirebaseProvider } from "react-redux-firebase";
 import { createFirestoreInstance } from "redux-firestore";
+import Loader from "./Components/Loader";
 import MainWindow from "./Components/MainWindow.js";
 import UpdateComponent from "./Components/UpdateComponent";
 import createStore from "./createStore";
@@ -54,7 +55,7 @@ const App = () => {
   const store = createStore();
   console.log(show);
   return (
-    <Suspense fallback={<div>Loading</div>}>
+    <Suspense fallback={<Loader />}>
       <Provider store={store}>
         <ReactReduxFirebaseProvider
           firebase={firebase}

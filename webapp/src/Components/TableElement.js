@@ -9,6 +9,7 @@ import {
   TOGGLE_CHART
 } from "../actions/tableActions";
 import { getCanShowNotification } from "../reducers/latestValues";
+import Loader from "./Loader";
 import {
   newCases,
   newCritical,
@@ -55,7 +56,7 @@ export const TableElement = ({ allValues, newValue }) => {
   }
   return (
     <>
-      <Suspense fallback={<div>Loading</div>}>
+      <Suspense fallback={<Loader />}>
         <ReactTable
           getProps={() => {
             return {

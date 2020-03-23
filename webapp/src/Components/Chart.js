@@ -14,6 +14,7 @@ import {
   getIsMinimized
 } from "../reducers/tableReducer";
 import "./Chart.css";
+import Loader from "./Loader";
 
 //Lazy loading
 const InsertChartIcon = React.lazy(() =>
@@ -51,7 +52,7 @@ const ChartElement = ({
   if (!canShow) {
     return (
       <div className="toolbarExpand">
-        <Suspense fallback={<div>Loading</div>}>
+        <Suspense fallback={<Loader />}>
           <InsertChartIcon
             onClick={() => {
               dispatch({ type: TOGGLE_CHART, payload: true });
@@ -66,7 +67,7 @@ const ChartElement = ({
   return (
     <div className={isMinimzed ? "toolbarFullscreen" : "toolbar"}>
       <div className="chart">
-        <Suspense fallback={<div>Loading</div>}>
+        <Suspense fallback={<Loader />}>
           <div className="headerContainer">
             <h2 style={{ paddingLeft: 10 }}>{currentSelected}</h2>
 

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectScope } from "../actions/tableActions";
 import { getChartScope } from "../reducers/tableReducer";
 import "./ChartScope.css";
+import Loader from "./Loader";
 const Button = React.lazy(() => import("@material-ui/core/Button"));
 
 function ChartScope() {
@@ -11,7 +12,7 @@ function ChartScope() {
 
   return (
     <div className="scopeWrapper">
-      <Suspense fallback={<div>Loading</div>}>
+      <Suspense fallback={<Loader />}>
         <Button
           disabled={scope === "1W"}
           color="primary"
