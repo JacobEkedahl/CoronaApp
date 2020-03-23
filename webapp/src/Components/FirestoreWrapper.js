@@ -1,10 +1,13 @@
-import React, { Fragment } from "react";
+import React, { Fragment, PureComponent } from "react";
 import { useFirestoreConnect } from "react-redux-firebase";
 
-function FirestoreWrapper() {
-  useFirestoreConnect("latestValues");
-
-  return <Fragment />;
+class FirestoreWrapper extends PureComponent {
+  state = {
+    connection: useFirestoreConnect("latestValues")
+  };
+  render() {
+    return <Fragment />;
+  }
 }
 
 export default FirestoreWrapper;

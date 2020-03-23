@@ -4,15 +4,14 @@ import "firebase/analytics";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { render } from "react-dom";
 import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import { Provider } from "react-redux";
 import { ReactReduxFirebaseProvider } from "react-redux-firebase";
 import { createFirestoreInstance } from "redux-firestore";
-import FirestoreWrapper from "./Components/FirestoreWrapper";
-import MainWindow from "./Components/MainWindow";
+import MainWindow from "./Components/MainWindow.js";
 import UpdateComponent from "./Components/UpdateComponent";
 import createStore from "./createStore";
 import registerServiceWorker from "./registerServiceWorker";
@@ -55,32 +54,33 @@ const App = () => {
   const store = createStore();
   console.log(show);
   return (
-    <Provider store={store}>
-      <ReactReduxFirebaseProvider
-        firebase={firebase}
-        config={rfConfig}
-        dispatch={store.dispatch}
-        createFirestoreInstance={createFirestoreInstance}
-      >
-        <ThemeProvider theme={darkTheme}>
-          <CssBaseline />
-          <div style={{ styles }}>
-            <ReactNotification
-              types={[
-                {
-                  htmlClasses: ["notification-awesome"],
-                  name: "awesome"
-                }
-              ]}
-              isMobile={true}
-            />
-            <FirestoreWrapper />
-            <UpdateComponent />
-            <MainWindow />
-          </div>
-        </ThemeProvider>
-      </ReactReduxFirebaseProvider>
-    </Provider>
+    <Suspense fallback={<div>Loading</div>}>
+      <Provider store={store}>
+        <ReactReduxFirebaseProvider
+          firebase={firebase}
+          config={rfConfig}
+          dispatch={store.dispatch}
+          createFirestoreInstance={createFirestoreInstance}
+        >
+          <ThemeProvider theme={darkTheme}>
+            <CssBaseline />
+            <div style={{ styles }}>
+              <ReactNotification
+                types={[
+                  {
+                    htmlClasses: ["notification-awesome"],
+                    name: "awesome"
+                  }
+                ]}
+                isMobile={true}
+              />
+              <UpdateComponent />
+              <MainWindow />
+            </div>
+          </ThemeProvider>
+        </ReactReduxFirebaseProvider>
+      </Provider>
+    </Suspense>
   );
 };
 

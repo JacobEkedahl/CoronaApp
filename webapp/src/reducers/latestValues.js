@@ -156,5 +156,30 @@ export const getCountriesToBeAnimated = state => state.latest.toBeAnimated;
 export const getLatestValues = state => state.latest.data;
 
 //history
-export const getSelectedHistory = state =>
-  state.firestore.ordered?.selectedHistory;
+export const getSelectedHistory = state => {
+  const tempHistory = state.firestore.ordered?.selectedHistory;
+  if (!tempHistory) return [];
+  const sorted = tempHistory.slice().sort((a, b) => {
+    return new Date(a.time.seconds) - new Date(b.time.seconds);
+  });
+  return sorted.map(entry => ({
+    cases: convertToInt(entry.cases),
+    ...(convertToInt(entry.deaths) !== 0 && {
+      deaths: convertToInt(entry.deaths)
+    }),
+    ...(convertToInt(entry.critical) !== 0 && {
+      critical: convertToInt(entry.critical)
+    }),
+    ...(convertToInt(entry.recovered) !== 0 && {
+      recovered: convertToInt(entry.recovered)
+    }),
+    date: entry.time.seconds
+  }));
+};
+
+const convertToInt = entry => {
+  if (!entry) {
+    return 0;
+  }
+  return parseInt(entry.replace(/[ ,.]/g, ""));
+};

@@ -1,11 +1,13 @@
-import React, { Fragment, Suspense } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
-import { firestoreConnect } from "react-redux-firebase";
+import React, { Suspense } from "react";
+import { connect } from "react-redux";
+import { useFirestoreConnect } from "react-redux-firebase";
 import { Legend, Line, Tooltip, XAxis, YAxis } from "recharts";
-import { compose } from "redux";
 import { selectContent } from "../actions/analyticsActions";
 import { TOGGLE_CHART } from "../actions/tableActions";
-import { getCurrentSelected } from "../reducers/latestValues";
+import {
+  getCurrentSelected,
+  getSelectedHistory
+} from "../reducers/latestValues";
 import {
   getCanShowChart,
   getChartScope,
@@ -25,43 +27,23 @@ const ResponsiveContainer = React.lazy(() =>
 const ReferenceLine = React.lazy(() =>
   import("recharts/lib/cartesian/ReferenceLine")
 );
-
 const ChartScope = React.lazy(() => import("./ChartScope"));
+
 const myProjectsReduxName = "selectedHistory";
 
-const convertToInt = entry => {
-  if (!entry) {
-    return 0;
-  }
-  return parseInt(entry.replace(/[ ,.]/g, ""));
-};
-
-const ChartElement = () => {
-  const dispatch = useDispatch();
-  const isMinimzed = useSelector(state => getIsMinimized(state));
-  const currentSelected = useSelector(state => getCurrentSelected(state));
-  const selectedHistory = useSelector(({ firestore: { ordered } }) => {
-    const tempHistory = ordered.selectedHistory;
-    if (!tempHistory) return [];
-    const sorted = tempHistory.slice().sort((a, b) => {
-      return new Date(a.time.seconds) - new Date(b.time.seconds);
-    });
-    return sorted.map(entry => ({
-      cases: convertToInt(entry.cases),
-      ...(convertToInt(entry.deaths) !== 0 && {
-        deaths: convertToInt(entry.deaths)
-      }),
-      ...(convertToInt(entry.critical) !== 0 && {
-        critical: convertToInt(entry.critical)
-      }),
-      ...(convertToInt(entry.recovered) !== 0 && {
-        recovered: convertToInt(entry.recovered)
-      }),
-      date: entry.time.seconds
-    }));
+const ChartElement = ({
+  dispatch,
+  currentSelected,
+  isMinimzed,
+  selectedHistory,
+  canShow,
+  scope
+}) => {
+  useFirestoreConnect({
+    collection: "history",
+    where: ["country", "==", currentSelected],
+    storeAs: myProjectsReduxName
   });
-  const canShow = useSelector(state => getCanShowChart(state));
-  const scope = useSelector(state => getChartScope(state));
 
   if (!currentSelected) {
     return null;
@@ -85,7 +67,6 @@ const ChartElement = () => {
     <div className={isMinimzed ? "toolbarFullscreen" : "toolbar"}>
       <div className="chart">
         <Suspense fallback={<div>Loading</div>}>
-          <DummyElement country={currentSelected} />
           <div className="headerContainer">
             <h2 style={{ paddingLeft: 10 }}>{currentSelected}</h2>
 
@@ -229,21 +210,10 @@ function convertToDate(tickItem) {
   return t;
 }
 
-export default ChartElement;
-
-const enhance = compose(
-  firestoreConnect(props => [
-    {
-      collection: "history",
-      where: [["country", "==", props.country]],
-      storeAs: myProjectsReduxName
-    }
-  ]),
-  connect((state, props) => ({
-    selectedHistory: state.firestore.data[myProjectsReduxName] // use storeAs path to gather from redux
-  }))
-);
-
-export const DummyElement = enhance(country => {
-  return <Fragment />;
-});
+export default connect(state => ({
+  currentSelected: getCurrentSelected(state),
+  isMinimzed: getIsMinimized(state),
+  selectedHistory: getSelectedHistory(state),
+  canShow: getCanShowChart(state),
+  scope: getChartScope(state)
+}))(ChartElement);

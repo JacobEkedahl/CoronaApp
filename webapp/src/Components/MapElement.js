@@ -1,10 +1,12 @@
-import React from "react";
-import { VectorMap } from "react-jvectormap";
+import React, { Suspense } from "react";
 import { useDispatch } from "react-redux";
 import { selectContent } from "../actions/analyticsActions";
 import { SELECTED_COUNTRIES, TOGGLE_CHART } from "../actions/tableActions";
 import { countries } from "../constants";
 import "./MapElement.css";
+const VectorMap = React.lazy(() =>
+  import("react-jvectormap").then(module => ({ default: module.VectorMap }))
+);
 
 const getRanking = countryInfo => {
   const cases = parseInt(countryInfo.cases.replace(/[ ,.]/g, "")) || 0;
@@ -48,52 +50,54 @@ const MapElement = ({ latestValues }) => {
   console.log("loading map");
   return (
     <>
-      <VectorMap
-        map={"world_mill"}
-        backgroundColor="transparent" //change it to ocean blue: #0077be
-        zoomOnScroll={false}
-        containerStyle={{
-          width: "100%",
-          height: "100%"
-        }}
-        onRegionClick={(e, countryCode) => {
-          handleClick(countryCode, dispatch);
-        }} //gets the country code
-        containerClassName="map"
-        regionStyle={{
-          initial: {
-            fill: "#e4e4e4",
-            "fill-opacity": 0.9,
-            stroke: "none",
-            "stroke-width": 0,
-            "stroke-opacity": 0
-          },
-          hover: {
-            "fill-opacity": 0.8,
-            cursor: "pointer"
-          }
-        }}
-        regionsSelectable={false}
-        series={{
-          regions: [
-            {
-              values: mapDataToCountries(latestValues), //this is your data
-              scale: [
-                "#e4e4e4",
-                "#FFFF00",
-                "#FFB422",
-                "#FF9B44",
-                "#FF000E",
-                "#BF4500",
-                "#580000",
-                "#441C00",
-                "#2F2800"
-              ], //your color game's here
-              normalizeFunction: "polynomial"
+      <Suspense>
+        <VectorMap
+          map={"world_mill"}
+          backgroundColor="transparent" //change it to ocean blue: #0077be
+          zoomOnScroll={false}
+          containerStyle={{
+            width: "100%",
+            height: "100%"
+          }}
+          onRegionClick={(e, countryCode) => {
+            handleClick(countryCode, dispatch);
+          }} //gets the country code
+          containerClassName="map"
+          regionStyle={{
+            initial: {
+              fill: "#e4e4e4",
+              "fill-opacity": 0.9,
+              stroke: "none",
+              "stroke-width": 0,
+              "stroke-opacity": 0
+            },
+            hover: {
+              "fill-opacity": 0.8,
+              cursor: "pointer"
             }
-          ]
-        }}
-      ></VectorMap>
+          }}
+          regionsSelectable={false}
+          series={{
+            regions: [
+              {
+                values: mapDataToCountries(latestValues), //this is your data
+                scale: [
+                  "#e4e4e4",
+                  "#FFFF00",
+                  "#FFB422",
+                  "#FF9B44",
+                  "#FF000E",
+                  "#BF4500",
+                  "#580000",
+                  "#441C00",
+                  "#2F2800"
+                ], //your color game's here
+                normalizeFunction: "polynomial"
+              }
+            ]
+          }}
+        ></VectorMap>
+      </Suspense>
     </>
   );
 };
