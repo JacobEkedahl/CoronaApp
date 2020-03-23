@@ -14,7 +14,6 @@ import { createFirestoreInstance } from "redux-firestore";
 import FirestoreWrapper from "./Components/FirestoreWrapper";
 import MainWindow from "./Components/MainWindow";
 import UpdateComponent from "./Components/UpdateComponent";
-import * as config from "./config";
 import createStore from "./createStore";
 import registerServiceWorker from "./registerServiceWorker";
 
@@ -27,6 +26,12 @@ const firebaseConfig = {
   messagingSenderId: "770208119300",
   appId: "1:770208119300:web:6cdc18adacf346c2eb1351",
   measurementId: "G-S9GTCFE311"
+};
+
+const rfConfig = {
+  userProfile: "users", // root that user profiles are written to
+  useFirestoreForProfile: true, // Save profile to Firestore instead of Real Time Database
+  useFirestoreForStorageMeta: true // Metadata associated with storage file uploads goes to Firestore
 };
 
 const darkTheme = createMuiTheme({
@@ -53,7 +58,7 @@ const App = () => {
     <Provider store={store}>
       <ReactReduxFirebaseProvider
         firebase={firebase}
-        config={config.rfConfig}
+        config={rfConfig}
         dispatch={store.dispatch}
         createFirestoreInstance={createFirestoreInstance}
       >

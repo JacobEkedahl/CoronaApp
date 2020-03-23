@@ -1,19 +1,7 @@
-import InsertChartIcon from "@material-ui/icons/InsertChart";
-import MinimizeIcon from "@material-ui/icons/Minimize";
-import moment from "moment";
-import React, { Fragment } from "react";
+import React, { Fragment, Suspense } from "react";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
-import {
-  Legend,
-  Line,
-  LineChart,
-  ReferenceLine,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from "recharts";
+import { Legend, Line, Tooltip, XAxis, YAxis } from "recharts";
 import { compose } from "redux";
 import { selectContent } from "../actions/analyticsActions";
 import { TOGGLE_CHART } from "../actions/tableActions";
@@ -24,7 +12,21 @@ import {
   getIsMinimized
 } from "../reducers/tableReducer";
 import "./Chart.css";
-import ChartScope from "./ChartScope";
+
+//Lazy loading
+const InsertChartIcon = React.lazy(() =>
+  import("@material-ui/icons/InsertChart")
+);
+const MinimizeIcon = React.lazy(() => import("@material-ui/icons/Minimize"));
+const LineChart = React.lazy(() => import("recharts/lib/chart/LineChart"));
+const ResponsiveContainer = React.lazy(() =>
+  import("recharts/lib/component/ResponsiveContainer")
+);
+const ReferenceLine = React.lazy(() =>
+  import("recharts/lib/cartesian/ReferenceLine")
+);
+
+const ChartScope = React.lazy(() => import("./ChartScope"));
 const myProjectsReduxName = "selectedHistory";
 
 const convertToInt = entry => {
@@ -67,12 +69,14 @@ const ChartElement = () => {
   if (!canShow) {
     return (
       <div className="toolbarExpand">
-        <InsertChartIcon
-          onClick={() => {
-            dispatch({ type: TOGGLE_CHART, payload: true });
-            selectContent("show_element", "chart");
-          }}
-        />
+        <Suspense fallback={<div>Loading</div>}>
+          <InsertChartIcon
+            onClick={() => {
+              dispatch({ type: TOGGLE_CHART, payload: true });
+              selectContent("show_element", "chart");
+            }}
+          />
+        </Suspense>
       </div>
     );
   }
@@ -80,73 +84,76 @@ const ChartElement = () => {
   return (
     <div className={isMinimzed ? "toolbarFullscreen" : "toolbar"}>
       <div className="chart">
-        <DummyElement country={currentSelected} />
-        <div className="headerContainer">
-          <h2 style={{ paddingLeft: 10 }}>{currentSelected}</h2>
-          <ChartScope />
-          <div
-            className="minimize"
-            onClick={() => {
-              selectContent("hide_element", "chart");
-              dispatch({ type: TOGGLE_CHART, payload: false });
-            }}
-          >
-            <MinimizeIcon />
-          </div>
-        </div>
-        <ResponsiveContainer>
-          <LineChart
-            data={filterOutData(selectedHistory, scope)}
-            margin={{ bottom: 20 }}
-          >
-            <Line
-              type="monotone"
-              dataKey="cases"
-              stroke="#8884d8"
-              dot={false}
-            />
-            <Line
-              type="monotone"
-              dataKey="deaths"
-              stroke="#D9190E"
-              dot={false}
-            />
-            <Line
-              type="monotone"
-              dataKey="critical"
-              stroke="#EBE309"
-              dot={false}
-            />
-            <Line
-              type="monotone"
-              dataKey="recovered"
-              stroke="#00FF00"
-              dot={false}
-            />
-            <XAxis
-              dataKey="date"
-              type="number"
-              tickFormatter={formatXAxis}
-              domain={[getMinTime(scope), getMaxTime(scope)]}
-              allowDuplicatedCategory={false}
-              padding={{ right: 25 }}
-            />
-            <YAxis />
-            <Legend />
-            <Tooltip
-              labelFormatter={formatLabel}
-              contentStyle={customStyle}
-              formatter={value => new Intl.NumberFormat("en").format(value)}
-            />
+        <Suspense fallback={<div>Loading</div>}>
+          <DummyElement country={currentSelected} />
+          <div className="headerContainer">
+            <h2 style={{ paddingLeft: 10 }}>{currentSelected}</h2>
 
-            <ReferenceLine x="1583064000" stroke="rgba(187,225,250,0.3)" />
-            <ReferenceLine x="1580558400" stroke="rgba(187,225,250,0.3)" />
-            <ReferenceLine x="1585742400" stroke="rgba(187,225,250,0.3)" />
-            <ReferenceLine x="1588334400" stroke="rgba(187,225,250,0.3)" />
-            <ReferenceLine x="1591012800" stroke="rgba(187,225,250,0.3)" />
-            <ReferenceLine x="1593604800" stroke="rgba(187,225,250,0.3)" />
-          </LineChart>
-        </ResponsiveContainer>
+            <ChartScope />
+            <div
+              className="minimize"
+              onClick={() => {
+                selectContent("hide_element", "chart");
+                dispatch({ type: TOGGLE_CHART, payload: false });
+              }}
+            >
+              <MinimizeIcon />
+            </div>
+          </div>
+          <ResponsiveContainer>
+            <LineChart
+              data={filterOutData(selectedHistory, scope)}
+              margin={{ bottom: 20 }}
+            >
+              <Line
+                type="monotone"
+                dataKey="cases"
+                stroke="#8884d8"
+                dot={false}
+              />
+              <Line
+                type="monotone"
+                dataKey="deaths"
+                stroke="#D9190E"
+                dot={false}
+              />
+              <Line
+                type="monotone"
+                dataKey="critical"
+                stroke="#EBE309"
+                dot={false}
+              />
+              <Line
+                type="monotone"
+                dataKey="recovered"
+                stroke="#00FF00"
+                dot={false}
+              />
+              <XAxis
+                dataKey="date"
+                type="number"
+                tickFormatter={formatXAxis}
+                domain={[getMinTime(scope), getMaxTime(scope)]}
+                allowDuplicatedCategory={false}
+                padding={{ right: 25 }}
+              />
+              <YAxis />
+              <Legend />
+              <Tooltip
+                labelFormatter={formatLabel}
+                contentStyle={customStyle}
+                formatter={value => new Intl.NumberFormat("en").format(value)}
+              />
+
+              <ReferenceLine x="1583064000" stroke="rgba(187,225,250,0.3)" />
+              <ReferenceLine x="1580558400" stroke="rgba(187,225,250,0.3)" />
+              <ReferenceLine x="1585742400" stroke="rgba(187,225,250,0.3)" />
+              <ReferenceLine x="1588334400" stroke="rgba(187,225,250,0.3)" />
+              <ReferenceLine x="1591012800" stroke="rgba(187,225,250,0.3)" />
+              <ReferenceLine x="1593604800" stroke="rgba(187,225,250,0.3)" />
+            </LineChart>
+          </ResponsiveContainer>
+        </Suspense>
       </div>
     </div>
   );
@@ -207,12 +214,19 @@ const customStyle = {
 };
 
 function formatXAxis(tickItem) {
-  // If using moment.js
-  return moment(tickItem * 1000).format("MM-DD");
+  const t = convertToDate(tickItem);
+  return t.getDate() + "/" + (t.getMonth() + 1);
 }
 
 function formatLabel(seconds) {
-  return moment(seconds * 1000).format("YYYY-MM-DD");
+  const t = convertToDate(seconds);
+  return t.toISOString().substring(0, 10);
+}
+
+function convertToDate(tickItem) {
+  var t = new Date(1970, 0, 1); // Epoch
+  t.setSeconds(tickItem);
+  return t;
 }
 
 export default ChartElement;
