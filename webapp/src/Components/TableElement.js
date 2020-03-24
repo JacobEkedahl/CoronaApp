@@ -1,14 +1,16 @@
 import React, { Suspense, useState } from "react";
 import { store } from "react-notifications-component";
-import { useDispatch, useSelector } from "react-redux";
+import { connect, useSelector } from "react-redux";
+import { useHistory } from "react-router";
 import "react-table-6/react-table.css";
 import { searchEvent, selectContent } from "../actions/analyticsActions";
+import { DONT_SHOW_NOTIFICATIONS, TOGGLE_CHART } from "../actions/tableActions";
 import {
-  DONT_SHOW_NOTIFICATIONS,
-  SELECTED_COUNTRIES,
-  TOGGLE_CHART
-} from "../actions/tableActions";
-import { getCanShowNotification } from "../reducers/latestValues";
+  getCanShowNotification,
+  getNewValue,
+  getTransformedValues
+} from "../reducers/latestValues";
+import { getIsMinimized } from "../reducers/tableReducer";
 import Loader from "./Loader";
 import {
   newCases,
@@ -25,12 +27,12 @@ function isString(value) {
   return typeof value === "string" || value instanceof String;
 }
 
-export const TableElement = ({ allValues, newValue }) => {
+const TableElement = ({ allValues, newValue, dispatch }) => {
   const [search, setSearch] = useState("");
+  let history = useHistory();
   const canShowNotification = useSelector(state =>
     getCanShowNotification(state)
   );
-  const dispatch = useDispatch();
 
   if (!!newValue && canShowNotification) {
     if (newValue["cases"]) {
@@ -81,12 +83,9 @@ export const TableElement = ({ allValues, newValue }) => {
 
             return {
               onClick: e => {
-                dispatch({
-                  type: SELECTED_COUNTRIES,
-                  payload: rowInfo.original.country
-                });
                 dispatch({ type: TOGGLE_CHART, payload: true });
                 selectContent("select_country_table", rowInfo.original.country);
+                history.push("/" + rowInfo.original.country);
               }
             };
           }}
@@ -180,3 +179,9 @@ export const TableElement = ({ allValues, newValue }) => {
     </>
   );
 };
+
+export default connect(state => ({
+  allValues: getTransformedValues(state),
+  newValue: getNewValue(state),
+  isMinimzed: getIsMinimized(state)
+}))(TableElement);

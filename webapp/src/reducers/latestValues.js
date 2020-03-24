@@ -2,8 +2,7 @@ import { cloneDeep } from "lodash";
 import { LATEST_INIT, LATEST_MODIFIED } from "../actions/firestoreActions";
 import {
   DONT_SHOW_NOTIFICATIONS,
-  LOAD_ANIMATED,
-  SELECTED_COUNTRIES
+  LOAD_ANIMATED
 } from "../actions/tableActions";
 
 const getDifferenceTwoString = (numberA, numberB) => {
@@ -19,17 +18,11 @@ const latest = (
     lastUpdated: null,
     hasLoaded: false,
     canShowNotification: true,
-    total: null,
-    currentSelected: null
+    total: null
   },
   action
 ) => {
   switch (action.type) {
-    case SELECTED_COUNTRIES:
-      return {
-        ...state,
-        currentSelected: action.payload
-      };
     case DONT_SHOW_NOTIFICATIONS:
       return {
         ...state,
@@ -147,13 +140,38 @@ const canUpdate = oldDate => {
 
 export default latest;
 
-export const getCurrentSelected = state =>
-  state.latest.currentSelected || "Total" || null;
 export const getCanShowNotification = state => state.latest.canShowNotification;
 export const getHasLoaded = state => state.latest.hasLoaded;
 export const getLatestUpdated = state => state.latest.lastUpdated;
 export const getCountriesToBeAnimated = state => state.latest.toBeAnimated;
 export const getLatestValues = state => state.latest.data;
+export const getAllValues = state => state.latest.data?.allValues;
+export const getNewValue = state => state.latest.data?.newValue;
+export const getTransformedValues = state => {
+  const data = getAllValues(state);
+  const countriesWithInfo = Object.keys(data).map(key => {
+    const cases = data[key].cases || "0";
+    const deaths = data[key].deaths || "0";
+    const critical = data[key].critical || "0";
+    const recovered = data[key].recovered || "0";
+
+    return {
+      country: key,
+      cases: cases,
+      deaths: deaths,
+      critical: critical,
+      recovered: recovered
+    };
+  });
+
+  countriesWithInfo.sort(function(a, b) {
+    const numberB = b.cases.replace(/[ ,.]/g, "");
+    const numberA = a.cases.replace(/[ ,.]/g, "");
+    return numberB - numberA;
+  });
+
+  return countriesWithInfo;
+};
 
 //history
 export const getSelectedHistory = state => {

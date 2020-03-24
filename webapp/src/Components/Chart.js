@@ -1,13 +1,11 @@
 import React, { Suspense } from "react";
 import { connect } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
+import { useParams } from "react-router";
 import { Legend, Line, Tooltip, XAxis, YAxis } from "recharts";
 import { selectContent } from "../actions/analyticsActions";
 import { TOGGLE_CHART } from "../actions/tableActions";
-import {
-  getCurrentSelected,
-  getSelectedHistory
-} from "../reducers/latestValues";
+import { getSelectedHistory } from "../reducers/latestValues";
 import {
   getCanShowChart,
   getChartScope,
@@ -34,19 +32,21 @@ const myProjectsReduxName = "selectedHistory";
 
 const ChartElement = ({
   dispatch,
-  currentSelected,
   isMinimzed,
   selectedHistory,
   canShow,
   scope
 }) => {
+  let { country } = useParams();
+  country = !!country ? country : "Total";
+  console.log(country);
   useFirestoreConnect({
     collection: "history",
-    where: ["country", "==", currentSelected],
+    where: ["country", "==", country],
     storeAs: myProjectsReduxName
   });
 
-  if (!currentSelected) {
+  if (!country) {
     return null;
   }
   if (!canShow) {
@@ -69,8 +69,7 @@ const ChartElement = ({
       <div className="chart">
         <Suspense fallback={<Loader />}>
           <div className="headerContainer">
-            <h2 style={{ paddingLeft: 10 }}>{currentSelected}</h2>
-
+            <h2 style={{ paddingLeft: 10 }}>{country}</h2>
             <ChartScope />
             <div
               className="minimize"
@@ -212,7 +211,6 @@ function convertToDate(tickItem) {
 }
 
 export default connect(state => ({
-  currentSelected: getCurrentSelected(state),
   isMinimzed: getIsMinimized(state),
   selectedHistory: getSelectedHistory(state),
   canShow: getCanShowChart(state),

@@ -76,6 +76,7 @@ const App = () => {
                 isMobile={true}
               />
               <UpdateComponent />
+
               <MainWindow />
             </div>
           </ThemeProvider>

@@ -1,57 +1,26 @@
-import React, { Suspense } from "react";
-import { useDispatch } from "react-redux";
+import React, { Suspense, useEffect, useRef } from "react";
+import { connect } from "react-redux";
+import { useHistory } from "react-router";
 import { selectContent } from "../actions/analyticsActions";
-import { SELECTED_COUNTRIES, TOGGLE_CHART } from "../actions/tableActions";
+import { TOGGLE_CHART } from "../actions/tableActions";
 import { countries } from "../constants";
+import { getAllValues } from "../reducers/latestValues";
 import "./MapElement.css";
+
 const VectorMap = React.lazy(() =>
   import("react-jvectormap").then(module => ({ default: module.VectorMap }))
 );
 
-const getRanking = countryInfo => {
-  const cases = parseInt(countryInfo.cases.replace(/[ ,.]/g, "")) || 0;
-  const deaths = parseInt(countryInfo.deaths.replace(/[ ,.]/g, "")) || 0;
-  const critical = parseInt(countryInfo.critical.replace(/[ ,.]/g, "")) || 0;
-  const recovered = parseInt(countryInfo.recovered.replace(/[ ,.]/g, "")) || 0;
+const MapElement = ({ allValues, dispatch }) => {
+  let history = useHistory();
+  const transformed = transformMap(allValues);
+  const mapRef = useRef(null);
 
-  let diff = cases - recovered - critical;
-  diff += critical * 2;
-  diff += deaths * 10;
-
-  return diff;
-};
-
-const mapDataToCountries = latestValues => {
-  const result = {};
-  Object.keys(countries).forEach(country => {
-    if (!latestValues[country]) {
-      result[countries[country]] = 0;
-    } else {
-      result[countries[country]] = getRanking(latestValues[country]);
-    }
-  });
-
-  return result;
-};
-
-const handleClick = (countryCode, dispatch) => {
-  const chosenCountry = Object.keys(countries).find(
-    key => countries[key] === countryCode
-  );
-
-  selectContent("select_country_map", chosenCountry);
-  dispatch({ type: SELECTED_COUNTRIES, payload: chosenCountry });
-  dispatch({ type: TOGGLE_CHART, payload: true });
-};
-
-const MapElement = ({ latestValues }) => {
-  const dispatch = useDispatch();
-
-  console.log("loading map");
   return (
     <>
       <Suspense>
         <VectorMap
+          ref={mapRef}
           map={"world_mill"}
           backgroundColor="transparent" //change it to ocean blue: #0077be
           zoomOnScroll={false}
@@ -60,7 +29,9 @@ const MapElement = ({ latestValues }) => {
             height: "100%"
           }}
           onRegionClick={(e, countryCode) => {
-            handleClick(countryCode, dispatch);
+            const map = mapRef.current.getMapObject();
+            map.tip.hide();
+            handleClick(countryCode, dispatch, history);
           }} //gets the country code
           containerClassName="map"
           regionStyle={{
@@ -80,7 +51,7 @@ const MapElement = ({ latestValues }) => {
           series={{
             regions: [
               {
-                values: mapDataToCountries(latestValues), //this is your data
+                values: transformed, //this is your data
                 scale: [
                   "#e4e4e4",
                   "#FFFF00",
@@ -102,4 +73,62 @@ const MapElement = ({ latestValues }) => {
   );
 };
 
-export default MapElement;
+export default React.memo(
+  connect(state => ({
+    allValues: getAllValues(state)
+  }))(MapElement, useTraceUpdate)
+);
+
+const handleClick = (countryCode, dispatch, history) => {
+  const chosenCountry = Object.keys(countries).find(
+    key => countries[key] === countryCode
+  );
+  history.push("/" + chosenCountry);
+  selectContent("select_country_map", chosenCountry);
+  dispatch({ type: TOGGLE_CHART, payload: true });
+};
+
+function useTraceUpdate(props) {
+  const prev = useRef(props);
+  useEffect(() => {
+    const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
+      if (prev.current[k] !== v) {
+        ps[k] = [prev.current[k], v];
+      }
+      return ps;
+    }, {});
+
+    prev.current = props;
+    if (Object.keys(changedProps).length > 0) {
+      return false;
+    }
+  });
+
+  return true;
+}
+
+const transformMap = allValues => {
+  const result = {};
+  Object.keys(countries).forEach(country => {
+    if (!allValues[country]) {
+      result[countries[country]] = 0;
+    } else {
+      result[countries[country]] = getRanking(allValues[country]);
+    }
+  });
+
+  return result;
+};
+
+const getRanking = countryInfo => {
+  const cases = parseInt(countryInfo.cases.replace(/[ ,.]/g, "")) || 0;
+  const deaths = parseInt(countryInfo.deaths.replace(/[ ,.]/g, "")) || 0;
+  const critical = parseInt(countryInfo.critical.replace(/[ ,.]/g, "")) || 0;
+  const recovered = parseInt(countryInfo.recovered.replace(/[ ,.]/g, "")) || 0;
+
+  let diff = cases - recovered - critical;
+  diff += critical * 2;
+  diff += deaths * 4;
+
+  return diff;
+};
