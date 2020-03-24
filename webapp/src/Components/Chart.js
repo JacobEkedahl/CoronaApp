@@ -39,7 +39,6 @@ const ChartElement = ({
 }) => {
   let { country } = useParams();
   country = !!country ? country : "Total";
-  console.log(country);
   useFirestoreConnect({
     collection: "history",
     where: ["country", "==", country],

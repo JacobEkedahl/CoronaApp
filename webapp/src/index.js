@@ -53,7 +53,6 @@ const styles = {
 
 const App = () => {
   const store = createStore();
-  console.log(show);
   return (
     <Suspense fallback={<Loader />}>
       <Provider store={store}>

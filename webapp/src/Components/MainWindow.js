@@ -17,7 +17,6 @@ function MainWindow() {
   const hasLoaded = useSelector(state => getHasLoaded(state));
   const isMinimzed = useSelector(state => getIsMinimized(state));
 
-  console.log("main render");
   if (!hasLoaded) return null;
 
   return (

@@ -68,7 +68,6 @@ const TableElement = ({ allValues, newValue, dispatch }) => {
             };
           }}
           getTrProps={(state, rowInfo, column, instance) => {
-            // console.log(rowInfo);
             if (
               !!newValue &&
               !!rowInfo &&
@@ -90,7 +89,6 @@ const TableElement = ({ allValues, newValue, dispatch }) => {
             };
           }}
           getTdProps={(state, rowInfo, column, instance) => {
-            // console.log(rowInfo);
             if (
               !!newValue &&
               !!rowInfo &&
