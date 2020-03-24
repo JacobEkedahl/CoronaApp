@@ -40,8 +40,6 @@ const darkTheme = createMuiTheme({
   }
 });
 
-let show = false;
-
 // Initialize Firebase instance
 firebase.initializeApp(firebaseConfig);
 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);

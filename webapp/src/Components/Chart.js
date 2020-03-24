@@ -88,7 +88,7 @@ const ChartElement = ({
               <Line
                 type="monotone"
                 dataKey="cases"
-                stroke="#8884d8"
+                stroke="#1682C0"
                 dot={false}
               />
               <Line
