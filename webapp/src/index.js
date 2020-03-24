@@ -6,6 +6,7 @@ import "firebase/auth";
 import "firebase/firestore";
 import React, { Suspense, useState } from "react";
 import { render } from "react-dom";
+import Helmet from "react-helmet";
 import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import { Provider } from "react-redux";
@@ -110,6 +111,19 @@ const AuthMiddleware = () => {
   );
 };
 
-render(<AuthMiddleware />, document.getElementById("root"));
+render(
+  <>
+    <Helmet>
+      <title>Corona is here</title>
+      <meta
+        name="description"
+        content="Corona updates in realtime. Displaying the number of new cases, deaths, recoveries and critical cases for all countries."
+      />
+      <link rel="canonical" href="https://coronaishere.com/" />
+    </Helmet>
+    <AuthMiddleware />
+  </>,
+  document.getElementById("root")
+);
 
 registerServiceWorker();

@@ -10,6 +10,7 @@
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-google-charts": "^3.0.15",
+    "react-helmet": "^5.2.1",
     "react-jvectormap": "0.0.16",
     "react-notifications-component": "^2.4.0",
     "react-redux": "^7.1.3",

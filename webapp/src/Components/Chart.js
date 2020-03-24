@@ -1,4 +1,5 @@
 import React, { Suspense } from "react";
+import { Helmet } from "react-helmet";
 import { connect } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
 import { useParams } from "react-router";
@@ -48,94 +49,120 @@ const ChartElement = ({
   if (!country) {
     return null;
   }
+
   if (!canShow) {
     return (
-      <div className="toolbarExpand">
-        <Suspense fallback={<Loader />}>
-          <InsertChartIcon
-            onClick={() => {
-              dispatch({ type: TOGGLE_CHART, payload: true });
-              selectContent("show_element", "chart");
-            }}
-          />
-        </Suspense>
-      </div>
+      <>
+        <Heading country={country} />
+        <div className="toolbarExpand">
+          <Suspense fallback={<Loader />}>
+            <InsertChartIcon
+              onClick={() => {
+                dispatch({ type: TOGGLE_CHART, payload: true });
+                selectContent("show_element", "chart");
+              }}
+            />
+          </Suspense>
+        </div>
+      </>
     );
   }
 
   return (
-    <div className={isMinimzed ? "toolbarFullscreen" : "toolbar"}>
-      <div className="chart">
-        <Suspense fallback={<Loader />}>
-          <div className="headerContainer">
-            <h2 style={{ paddingLeft: 10 }}>{country}</h2>
-            <ChartScope />
-            <div
-              className="minimize"
-              onClick={() => {
-                selectContent("hide_element", "chart");
-                dispatch({ type: TOGGLE_CHART, payload: false });
-              }}
-            >
-              <MinimizeIcon />
+    <>
+      <Heading country={country} />
+      <div className={isMinimzed ? "toolbarFullscreen" : "toolbar"}>
+        <div className="chart">
+          <Suspense fallback={<Loader />}>
+            <div className="headerContainer">
+              <h1 style={{ paddingLeft: 10, fontSize: "initial" }}>
+                {country}
+              </h1>
+              <ChartScope />
+              <div
+                className="minimize"
+                onClick={() => {
+                  selectContent("hide_element", "chart");
+                  dispatch({ type: TOGGLE_CHART, payload: false });
+                }}
+              >
+                <MinimizeIcon />
+              </div>
             </div>
-          </div>
-          <ResponsiveContainer>
-            <LineChart
-              data={filterOutData(selectedHistory, scope)}
-              margin={{ bottom: 20 }}
-            >
-              <Line
-                type="monotone"
-                dataKey="cases"
-                stroke="#1682C0"
-                dot={false}
-              />
-              <Line
-                type="monotone"
-                dataKey="deaths"
-                stroke="#D9190E"
-                dot={false}
-              />
-              <Line
-                type="monotone"
-                dataKey="critical"
-                stroke="#EBE309"
-                dot={false}
-              />
-              <Line
-                type="monotone"
-                dataKey="recovered"
-                stroke="#00FF00"
-                dot={false}
-              />
-              <XAxis
-                dataKey="date"
-                type="number"
-                tickFormatter={formatXAxis}
-                domain={[getMinTime(scope), getMaxTime(scope)]}
-                allowDuplicatedCategory={false}
-                padding={{ right: 25 }}
-              />
-              <YAxis />
-              <Legend />
-              <Tooltip
-                labelFormatter={formatLabel}
-                contentStyle={customStyle}
-                formatter={value => new Intl.NumberFormat("en").format(value)}
-              />
+            <ResponsiveContainer>
+              <LineChart
+                data={filterOutData(selectedHistory, scope)}
+                margin={{ bottom: 20 }}
+              >
+                <Line
+                  type="monotone"
+                  dataKey="cases"
+                  stroke="#1682C0"
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="deaths"
+                  stroke="#D9190E"
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="critical"
+                  stroke="#EBE309"
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="recovered"
+                  stroke="#00FF00"
+                  dot={false}
+                />
+                <XAxis
+                  dataKey="date"
+                  type="number"
+                  tickFormatter={formatXAxis}
+                  domain={[getMinTime(scope), getMaxTime(scope)]}
+                  allowDuplicatedCategory={false}
+                  padding={{ right: 25 }}
+                />
+                <YAxis />
+                <Legend />
+                <Tooltip
+                  labelFormatter={formatLabel}
+                  contentStyle={customStyle}
+                  formatter={value => new Intl.NumberFormat("en").format(value)}
+                />
 
-              <ReferenceLine x="1583064000" stroke="rgba(187,225,250,0.3)" />
-              <ReferenceLine x="1580558400" stroke="rgba(187,225,250,0.3)" />
-              <ReferenceLine x="1585742400" stroke="rgba(187,225,250,0.3)" />
-              <ReferenceLine x="1588334400" stroke="rgba(187,225,250,0.3)" />
-              <ReferenceLine x="1591012800" stroke="rgba(187,225,250,0.3)" />
-              <ReferenceLine x="1593604800" stroke="rgba(187,225,250,0.3)" />
-            </LineChart>
-          </ResponsiveContainer>
-        </Suspense>
+                <ReferenceLine x="1583064000" stroke="rgba(187,225,250,0.3)" />
+                <ReferenceLine x="1580558400" stroke="rgba(187,225,250,0.3)" />
+                <ReferenceLine x="1585742400" stroke="rgba(187,225,250,0.3)" />
+                <ReferenceLine x="1588334400" stroke="rgba(187,225,250,0.3)" />
+                <ReferenceLine x="1591012800" stroke="rgba(187,225,250,0.3)" />
+                <ReferenceLine x="1593604800" stroke="rgba(187,225,250,0.3)" />
+              </LineChart>
+            </ResponsiveContainer>
+          </Suspense>
+        </div>
       </div>
-    </div>
+    </>
+  );
+};
+
+const Heading = ({ country }) => {
+  const metaCountry = country === "Total" ? "the World" : country;
+  const linkEnding = country === "Total" ? "" : country;
+  return (
+    <Helmet>
+      <title>Corona is in {metaCountry}</title>
+
+      <link rel="canonical" href={`https://coronaishere.com/${linkEnding}`} />
+      <meta
+        name="description"
+        content={`Current spread of Corona in ${metaCountry}.
+   Showcasing the history of the number of people died, recovered, confirmed cases and crtical cases of Corona/Covid19 in ${metaCountry}`}
+      />
+    </Helmet>
   );
 };
 

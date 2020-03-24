@@ -14,13 +14,11 @@ const VectorMap = React.lazy(() =>
 const MapElement = ({ allValues, dispatch }) => {
   let history = useHistory();
   const transformed = transformMap(allValues);
-  const mapRef = useRef(null);
 
   return (
     <>
       <Suspense>
         <VectorMap
-          ref={mapRef}
           map={"world_mill"}
           backgroundColor="transparent" //change it to ocean blue: #0077be
           zoomOnScroll={false}
@@ -29,8 +27,13 @@ const MapElement = ({ allValues, dispatch }) => {
             height: "100%"
           }}
           onRegionClick={(e, countryCode) => {
-            const map = mapRef.current.getMapObject();
-            map.tip.hide();
+            setTimeout(() => {
+              Array.from(
+                document.getElementsByClassName("jvectormap-tip")
+              ).forEach(el => {
+                el.style.display = "none";
+              });
+            }, 40);
             handleClick(countryCode, dispatch, history);
           }} //gets the country code
           containerClassName="map"
