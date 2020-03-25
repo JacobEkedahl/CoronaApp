@@ -1,5 +1,6 @@
 import { CssBaseline } from "@material-ui/core";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import "animate.css/animate.css";
 import "firebase/analytics";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -61,18 +62,18 @@ const App = () => {
           dispatch={store.dispatch}
           createFirestoreInstance={createFirestoreInstance}
         >
+          <ReactNotification
+            types={[
+              {
+                htmlClasses: ["notification-awesome"],
+                name: "awesome"
+              }
+            ]}
+            isMobile={true}
+          />
           <ThemeProvider theme={darkTheme}>
             <CssBaseline />
             <div style={{ styles }}>
-              <ReactNotification
-                types={[
-                  {
-                    htmlClasses: ["notification-awesome"],
-                    name: "awesome"
-                  }
-                ]}
-                isMobile={true}
-              />
               <UpdateComponent />
 
               <MainWindow />
