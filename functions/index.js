@@ -7,30 +7,10 @@ const errorHook =
 const axios = require("axios");
 const helpers = require("./helpers");
 
-const express = require("express");
-const fetch = require("node-fetch");
-const url = require("url");
-const app = express();
-
-const pwaShell = require("./pwashell");
-const FIREBASE_CONFIG = JSON.parse(process.env.FIREBASE_CONFIG);
-
 admin.initializeApp({
   credential: admin.credential.applicationDefault()
 });
 const db = admin.firestore();
-
-exports.bigben = functions.https.onRequest((req, res) => {
-  const hours = (new Date().getHours() % 12) + 1; // London is UTC + 1hr;
-  res.status(200).send(`<!doctype html>
-    <head>
-      <title>Time</title>
-    </head>
-    <body>
-      ${"BONG ".repeat(hours)}
-    </body>
-  </html>`);
-});
 
 exports.updateHistory = functions
   .region("europe-west2")
