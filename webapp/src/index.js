@@ -1,23 +1,41 @@
-import { CssBaseline } from "@material-ui/core";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import { createMuiTheme } from "@material-ui/core/styles";
 import "animate.css/animate.css";
-import "firebase/analytics";
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { render } from "react-dom";
 import Helmet from "react-helmet";
-import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import { Provider } from "react-redux";
 import { ReactReduxFirebaseProvider } from "react-redux-firebase";
+import {
+  FirebaseAppProvider,
+  preloadAuth,
+  preloadFirestore,
+  useAnalytics,
+  useAuth,
+  useFirebaseApp
+} from "reactfire";
 import { createFirestoreInstance } from "redux-firestore";
 import Loader from "./Components/Loader";
-import MainWindow from "./Components/MainWindow.js";
-import UpdateComponent from "./Components/UpdateComponent";
 import createStore from "./createStore";
 import registerServiceWorker from "./registerServiceWorker";
+
+const MainWindow = React.lazy(() => import("./Components/MainWindow.js"));
+const ReactNotification = React.lazy(() =>
+  import("react-notifications-component")
+);
+const CssBaseline = React.lazy(() =>
+  import("@material-ui/core").then(module => ({ default: module.CssBaseline }))
+);
+
+const ThemeProvider = React.lazy(() =>
+  import("@material-ui/core").then(module => ({
+    default: module.ThemeProvider
+  }))
+);
+
+const UpdateComponent = React.lazy(() =>
+  import("./Components/UpdateComponent")
+);
 
 const firebaseConfig = {
   apiKey: "AIzaSyAtmYK_5Wvl6pvzEu5BwuUWqi3kg1awLng",
@@ -43,9 +61,9 @@ const darkTheme = createMuiTheme({
 });
 
 // Initialize Firebase instance
-firebase.initializeApp(firebaseConfig);
-firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-firebase.analytics();
+//firebase.initializeApp(firebaseConfig);
+//firebase.firestore();
+//firebase.analytics();
 
 const styles = {
   textAlign: "left"
@@ -53,15 +71,18 @@ const styles = {
 
 const App = () => {
   const store = createStore();
+  useAnalytics();
+  preloadFirestore();
+  preloadAuth();
   return (
-    <Suspense fallback={<Loader />}>
-      <Provider store={store}>
-        <ReactReduxFirebaseProvider
-          firebase={firebase}
-          config={rfConfig}
-          dispatch={store.dispatch}
-          createFirestoreInstance={createFirestoreInstance}
-        >
+    <Provider store={store}>
+      <ReactReduxFirebaseProvider
+        firebase={useFirebaseApp()}
+        config={rfConfig}
+        dispatch={store.dispatch}
+        createFirestoreInstance={createFirestoreInstance}
+      >
+        <Suspense fallback={<div>hi</div>}>
           <ReactNotification
             types={[
               {
@@ -71,59 +92,52 @@ const App = () => {
             ]}
             isMobile={true}
           />
-          <ThemeProvider theme={darkTheme}>
+        </Suspense>
+        <ThemeProvider theme={darkTheme}>
+          <Suspense fallback={<></>}>
             <CssBaseline />
-            <div style={{ styles }}>
-              <UpdateComponent />
-
-              <MainWindow />
-            </div>
-          </ThemeProvider>
-        </ReactReduxFirebaseProvider>
-      </Provider>
-    </Suspense>
+          </Suspense>
+          <div style={{ styles }}>
+            <UpdateComponent />
+            <Suspense fallback={<div>loading..</div>}>
+              <AuthMiddleware>
+                <Suspense fallback={<Loader />}>
+                  <MainWindow />
+                </Suspense>
+              </AuthMiddleware>
+            </Suspense>
+          </div>
+        </ThemeProvider>
+      </ReactReduxFirebaseProvider>
+    </Provider>
   );
 };
 
-const AuthMiddleware = () => {
+const AuthMiddleware = ({ children }) => {
   const [isLoggedIn, setLoggedIn] = useState(false);
+  const auth = useAuth();
 
-  if (!isLoggedIn) {
-    var user = firebase.auth().currentUser;
-    if (!user) {
-      firebase
-        .auth()
-        .signInAnonymously()
-        .then(() => {
-          setLoggedIn(true);
-        });
-    } else {
-      setLoggedIn(true);
-    }
-  }
+  useEffect(() => {
+    auth.signInAnonymously().then(() => setLoggedIn(true));
+  }, [auth]);
 
-  return isLoggedIn ? (
-    <App />
-  ) : (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
-      <div style={{ width: 400, height: 400 }}></div>
-    </ThemeProvider>
-  );
+  return isLoggedIn ? children : null;
 };
 
 render(
-  <>
-    <Helmet>
-      <title>Corona is here</title>
-      <meta
-        name="description"
-        content="Corona updates in realtime. Displaying the number of new cases, deaths, recoveries and critical cases for all countries."
-      />
-      <link rel="canonical" href="https://coronaishere.com/" />
-    </Helmet>
-    <AuthMiddleware />
-  </>,
+  <Suspense fallback={<></>}>
+    <FirebaseAppProvider firebaseConfig={firebaseConfig}>
+      <Helmet>
+        <title>Corona is here</title>
+        <meta
+          name="description"
+          content="Corona updates in realtime. Displaying the number of new cases, deaths, recoveries and critical cases for all countries."
+        />
+        <link rel="canonical" href="https://coronaishere.com/" />
+      </Helmet>
+      <App />
+    </FirebaseAppProvider>
+  </Suspense>,
   document.getElementById("root")
 );
 

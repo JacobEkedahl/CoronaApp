@@ -1,6 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectContent } from "../actions/analyticsActions";
+import { useAnalytics } from "reactfire";
+import { SelectContent } from "../actions/analyticsActions";
 import { TOGGLE_TABLE } from "../actions/tableActions";
 import { getIsMinimized } from "../reducers/tableReducer";
 import "./HideButton.css";
@@ -8,6 +9,7 @@ import "./HideButton.css";
 const HideButton = () => {
   const isMinimzed = useSelector(state => getIsMinimized(state));
   const dispatch = useDispatch();
+  const analytics = useAnalytics();
 
   return (
     <div
@@ -16,9 +18,9 @@ const HideButton = () => {
       onClick={() => {
         dispatch({ type: TOGGLE_TABLE, payload: !isMinimzed });
         if (!isMinimzed) {
-          selectContent("hide_element", "table");
+          SelectContent(analytics, "hide_element", "table");
         } else {
-          selectContent("show_element", "table");
+          SelectContent(analytics, "show_element", "table");
         }
       }}
     >

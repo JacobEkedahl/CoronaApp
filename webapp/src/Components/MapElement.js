@@ -1,7 +1,8 @@
 import React, { Suspense, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router";
-import { selectContent } from "../actions/analyticsActions";
+import { useAnalytics } from "reactfire";
+import { SelectContent } from "../actions/analyticsActions";
 import { TOGGLE_CHART } from "../actions/tableActions";
 import { countries } from "../constants";
 import { getAllValues } from "../reducers/latestValues";
@@ -13,6 +14,7 @@ const VectorMap = React.lazy(() =>
 
 const MapElement = ({ allValues, dispatch }) => {
   let history = useHistory();
+  const analytics = useAnalytics();
   const transformed = transformMap(allValues);
 
   return (
@@ -34,7 +36,7 @@ const MapElement = ({ allValues, dispatch }) => {
                 el.style.display = "none";
               });
             }, 40);
-            handleClick(countryCode, dispatch, history);
+            handleClick(analytics, countryCode, dispatch, history);
           }} //gets the country code
           containerClassName="map"
           regionStyle={{
@@ -82,12 +84,12 @@ export default React.memo(
   }))(MapElement, useTraceUpdate)
 );
 
-const handleClick = (countryCode, dispatch, history) => {
+const handleClick = (analytics, countryCode, dispatch, history) => {
   const chosenCountry = Object.keys(countries).find(
     key => countries[key] === countryCode
   );
   history.push("/" + chosenCountry);
-  selectContent("select_country_map", chosenCountry);
+  SelectContent(analytics, "select_country_map", chosenCountry);
   dispatch({ type: TOGGLE_CHART, payload: true });
 };
 

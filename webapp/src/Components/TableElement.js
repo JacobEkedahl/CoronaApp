@@ -3,7 +3,8 @@ import { store } from "react-notifications-component";
 import { connect, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import "react-table-6/react-table.css";
-import { searchEvent, selectContent } from "../actions/analyticsActions";
+import { useAnalytics } from "reactfire";
+import { SearchEvent, SelectContent } from "../actions/analyticsActions";
 import { DONT_SHOW_NOTIFICATIONS, TOGGLE_CHART } from "../actions/tableActions";
 import {
   getCanShowNotification,
@@ -29,6 +30,7 @@ function isString(value) {
 
 const TableElement = ({ allValues, newValue, dispatch }) => {
   const [search, setSearch] = useState("");
+  const analytics = useAnalytics();
   let history = useHistory();
   const canShowNotification = useSelector(state =>
     getCanShowNotification(state)
@@ -83,7 +85,11 @@ const TableElement = ({ allValues, newValue, dispatch }) => {
             return {
               onClick: e => {
                 dispatch({ type: TOGGLE_CHART, payload: true });
-                selectContent("select_country_table", rowInfo.original.country);
+                SelectContent(
+                  analytics,
+                  "select_country_table",
+                  rowInfo.original.country
+                );
                 history.push("/" + rowInfo.original.country);
               }
             };
@@ -117,13 +123,14 @@ const TableElement = ({ allValues, newValue, dispatch }) => {
               sortable: false,
               Header: (
                 <TextField
+                  style={{ height: 40 }}
                   label="Country"
                   variant="outlined"
                   size="small"
                   id="countryField"
                   onChange={event => {
                     setSearch(event.target.value);
-                    searchEvent(event.target.value);
+                    SearchEvent(analytics, event.target.value);
                   }}
                 />
               ),

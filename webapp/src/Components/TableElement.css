@@ -17,6 +17,11 @@
     outline-width: 0;
 }
 
+input {
+  height: 40px!important;
+}
+
+
 @keyframes FADEIN_TD {
   0%   {font-size: 0.875rem; font-weight: bold}
   50% {font-size: 0.9rem; font-weight: bold}

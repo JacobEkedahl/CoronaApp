@@ -3,8 +3,9 @@ import { Helmet } from "react-helmet";
 import { connect } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
 import { useParams } from "react-router";
+import { useAnalytics } from "reactfire";
 import { Legend, Line, Tooltip, XAxis, YAxis } from "recharts";
-import { selectContent } from "../actions/analyticsActions";
+import { SelectContent } from "../actions/analyticsActions";
 import { TOGGLE_CHART } from "../actions/tableActions";
 import { getSelectedHistory } from "../reducers/latestValues";
 import {
@@ -38,6 +39,7 @@ const ChartElement = ({
   canShow,
   scope
 }) => {
+  const analytics = useAnalytics();
   let { country } = useParams();
   country = !!country ? country : "Total";
   useFirestoreConnect({
@@ -59,7 +61,7 @@ const ChartElement = ({
             <InsertChartIcon
               onClick={() => {
                 dispatch({ type: TOGGLE_CHART, payload: true });
-                selectContent("show_element", "chart");
+                SelectContent(analytics, "show_element", "chart");
               }}
             />
           </Suspense>
@@ -82,7 +84,7 @@ const ChartElement = ({
               <div
                 className="minimize"
                 onClick={() => {
-                  selectContent("hide_element", "chart");
+                  SelectContent(analytics, "hide_element", "chart");
                   dispatch({ type: TOGGLE_CHART, payload: false });
                 }}
               >

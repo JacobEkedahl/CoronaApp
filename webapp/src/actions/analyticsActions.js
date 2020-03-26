@@ -1,8 +1,4 @@
-import "firebase/analytics";
-import firebase from "firebase/app";
-
-export const selectContent = (type, id, items = []) => {
-  const analytics = firebase.analytics();
+export function SelectContent(analytics, type, id, items = []) {
   analytics.logEvent("select_content", {
     content_type: type,
     content_id: id,
@@ -10,11 +6,13 @@ export const selectContent = (type, id, items = []) => {
       items: items
     })
   });
-};
 
-export const searchEvent = searchTerm => {
-  const analytics = firebase.analytics();
+  return null;
+}
+
+export function SearchEvent(analytics, searchTerm) {
   analytics.logEvent("search", {
     search_term: searchTerm
   });
-};
+  return null;
+}
