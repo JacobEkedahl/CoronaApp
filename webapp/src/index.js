@@ -12,7 +12,8 @@ import {
   preloadFirestore,
   useAnalytics,
   useAuth,
-  useFirebaseApp
+  useFirebaseApp,
+  usePerformance
 } from "reactfire";
 import { createFirestoreInstance } from "redux-firestore";
 import Loader from "./Components/Loader";
@@ -72,6 +73,7 @@ const styles = {
 const App = () => {
   const store = createStore();
   useAnalytics();
+  usePerformance();
   preloadFirestore();
   preloadAuth();
   return (
