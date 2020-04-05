@@ -18,6 +18,10 @@
   .tableHidden {
     display:flex;
   }
+
+  .newsHidden {
+    display: flex;
+  }
 }
 
 @media screen and (min-width: 520px) and (max-width: 1200px) and (orientation: landscape) {
@@ -63,8 +67,14 @@
     display:flex;
   }
 
-  .rt-th {
+  .newsHidden {
+    display: flex;
+  }
 
+  
+  .news {
+    width: calc(100% - 60px);
+    margin-left: 30px;
   }
 }
 
@@ -106,6 +116,10 @@
   .tableHidden {
     display:none;
   }
+
+  .newsHidden {
+    display: none;
+  }
 }
 
 .map, table, .hideButton {
@@ -114,5 +128,10 @@
 
 .table {
   display:flex;
-  max-height:calc(100vh - 40px);
+  max-height:calc(45vh - 20px);
+}
+
+.news {
+  height:calc(55vh - 20px);
+  display: block;
 }

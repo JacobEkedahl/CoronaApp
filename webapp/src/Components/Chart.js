@@ -11,7 +11,7 @@ import { getSelectedHistory } from "../reducers/latestValues";
 import {
   getCanShowChart,
   getChartScope,
-  getIsMinimized
+  getIsMinimized,
 } from "../reducers/tableReducer";
 import "./Chart.css";
 import Loader from "./Loader";
@@ -37,7 +37,7 @@ const ChartElement = ({
   isMinimzed,
   selectedHistory,
   canShow,
-  scope
+  scope,
 }) => {
   const analytics = useAnalytics();
   let { country } = useParams();
@@ -45,7 +45,7 @@ const ChartElement = ({
   useFirestoreConnect({
     collection: "history",
     where: ["country", "==", country],
-    storeAs: myProjectsReduxName
+    storeAs: myProjectsReduxName,
   });
 
   if (!country) {
@@ -133,7 +133,9 @@ const ChartElement = ({
                 <Tooltip
                   labelFormatter={formatLabel}
                   contentStyle={customStyle}
-                  formatter={value => new Intl.NumberFormat("en").format(value)}
+                  formatter={(value) =>
+                    new Intl.NumberFormat("en").format(value)
+                  }
                 />
 
                 <ReferenceLine x="1583064000" stroke="rgba(187,225,250,0.3)" />
@@ -168,7 +170,7 @@ const Heading = ({ country }) => {
   );
 };
 
-const getMaxTime = scope => {
+const getMaxTime = (scope) => {
   var d = new Date();
   if (scope === "1W" || scope === "1M") {
     return d / 1000;
@@ -177,7 +179,7 @@ const getMaxTime = scope => {
   return "dataMax";
 };
 
-const getMinTime = scope => {
+const getMinTime = (scope) => {
   var d = new Date();
   switch (scope) {
     case "1W":
@@ -210,7 +212,7 @@ const filterOutData = (selectedHistory, scope) => {
 };
 
 const filterData = (selectedHistory, timeLimitSeconds) =>
-  selectedHistory.filter(entry => entry.date >= timeLimitSeconds);
+  selectedHistory.filter((entry) => entry.date >= timeLimitSeconds);
 
 const customStyle = {
   width: "180px",
@@ -219,7 +221,7 @@ const customStyle = {
   lineHeight: "12px",
   border: "0px",
   backgroundColor: "rgba(255, 255, 255, 0)",
-  padding: "10px"
+  padding: "10px",
 };
 
 function formatXAxis(tickItem) {
@@ -229,7 +231,7 @@ function formatXAxis(tickItem) {
 
 function formatLabel(seconds) {
   const t = convertToDate(seconds);
-  return t.toISOString().substring(0, 10);
+  return t.toISOString().substring(0, 10) + " (" + t.toLocaleTimeString() + ")";
 }
 
 function convertToDate(tickItem) {
@@ -238,9 +240,9 @@ function convertToDate(tickItem) {
   return t;
 }
 
-export default connect(state => ({
+export default connect((state) => ({
   isMinimzed: getIsMinimized(state),
   selectedHistory: getSelectedHistory(state),
   canShow: getCanShowChart(state),
-  scope: getChartScope(state)
+  scope: getChartScope(state),
 }))(ChartElement);

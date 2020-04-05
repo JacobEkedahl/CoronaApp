@@ -8,14 +8,15 @@ import Chart from "./Chart";
 import HideButton from "./HideButton";
 import Loader from "./Loader";
 import "./MainWindow.css";
+import News from "./News";
 import TableElement from "./TableElement";
 
 const MapElement = React.lazy(() => import("./MapElement"));
 
 function MainWindow() {
   useFirestoreConnect("latestValues");
-  const hasLoaded = useSelector(state => getHasLoaded(state));
-  const isMinimzed = useSelector(state => getIsMinimized(state));
+  const hasLoaded = useSelector((state) => getHasLoaded(state));
+  const isMinimzed = useSelector((state) => getIsMinimized(state));
 
   if (!hasLoaded) return null;
 
@@ -41,8 +42,13 @@ function MainWindow() {
             </Route>
           </Switch>
         </>
-        <div className={isMinimzed ? "tableHidden" : "table"}>
-          <TableElement />
+        <div>
+          <div className={isMinimzed ? "newsHidden" : "news"}>
+            <News />
+          </div>
+          <div className={isMinimzed ? "tableHidden" : "table"}>
+            <TableElement />
+          </div>
         </div>
       </Router>
     </div>

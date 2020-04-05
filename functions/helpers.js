@@ -5,7 +5,7 @@ const webhookUrl =
   "https://discordapp.com/api/webhooks/688444307598082072/5xRtv3WSub2jE7np1RMdNh18xLBUnRHHAJce1fqLLqJSy51dA5vriAmLYEkbSXDSc6wf";
 const axios = require("axios");
 
-exports.constructCountryInfo = async tableData => {
+exports.constructCountryInfo = async (tableData) => {
   const totalCountries = [];
   const totalCases = [];
   const totalDeath = [];
@@ -14,7 +14,7 @@ exports.constructCountryInfo = async tableData => {
   const excludedCountries = [];
   const excludeCountriesNames = [];
 
-  tableData.forEach(column => {
+  tableData.forEach((column) => {
     const title = column[0];
 
     switch (title) {
@@ -66,14 +66,14 @@ exports.constructCountryInfo = async tableData => {
       cases: totalCases[index],
       critical: totalSerious[index],
       recovered: totalRecoveries[index],
-      deaths: totalDeath[index]
+      deaths: totalDeath[index],
     });
   }
 
   if (excludeCountriesNames.length !== 0) {
     await axios.post(webhookUrl, {
       username: "New countries with corona",
-      content: `These countries have not been added for translation: ${excludeCountriesNames.toString()}`
+      content: `These countries have not been added for translation: ${excludeCountriesNames.toString()}`,
     });
   }
 
@@ -89,6 +89,7 @@ exports.fetchData = async () => {
 
 const countries = {
   //not verified
+  World: "Total",
   Burundi: "Burundi",
   Botswana: "Botswana",
   Belize: "Belize",
@@ -317,5 +318,5 @@ const countries = {
   Suriname: "Suriname",
   Eswatini: "Eswatini",
   Togo: "Togo",
-  "U.S. Virgin Islands": "U.S. Virgin Islands"
+  "U.S. Virgin Islands": "U.S. Virgin Islands",
 };
