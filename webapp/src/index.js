@@ -13,7 +13,7 @@ import {
   useAnalytics,
   useAuth,
   useFirebaseApp,
-  usePerformance
+  usePerformance,
 } from "reactfire";
 import { createFirestoreInstance } from "redux-firestore";
 import Loader from "./Components/Loader";
@@ -25,12 +25,14 @@ const ReactNotification = React.lazy(() =>
   import("react-notifications-component")
 );
 const CssBaseline = React.lazy(() =>
-  import("@material-ui/core").then(module => ({ default: module.CssBaseline }))
+  import("@material-ui/core").then((module) => ({
+    default: module.CssBaseline,
+  }))
 );
 
 const ThemeProvider = React.lazy(() =>
-  import("@material-ui/core").then(module => ({
-    default: module.ThemeProvider
+  import("@material-ui/core").then((module) => ({
+    default: module.ThemeProvider,
   }))
 );
 
@@ -46,28 +48,23 @@ const firebaseConfig = {
   storageBucket: "corona-live-updates.appspot.com",
   messagingSenderId: "770208119300",
   appId: "1:770208119300:web:6cdc18adacf346c2eb1351",
-  measurementId: "G-S9GTCFE311"
+  measurementId: "G-S9GTCFE311",
 };
 
 const rfConfig = {
   userProfile: "users", // root that user profiles are written to
   useFirestoreForProfile: true, // Save profile to Firestore instead of Real Time Database
-  useFirestoreForStorageMeta: true // Metadata associated with storage file uploads goes to Firestore
+  useFirestoreForStorageMeta: true, // Metadata associated with storage file uploads goes to Firestore
 };
 
 const darkTheme = createMuiTheme({
   palette: {
-    type: "dark"
-  }
+    type: "dark",
+  },
 });
 
-// Initialize Firebase instance
-//firebase.initializeApp(firebaseConfig);
-//firebase.firestore();
-//firebase.analytics();
-
 const styles = {
-  textAlign: "left"
+  textAlign: "left",
 };
 
 const App = () => {
@@ -89,8 +86,8 @@ const App = () => {
             types={[
               {
                 htmlClasses: ["notification-awesome"],
-                name: "awesome"
-              }
+                name: "awesome",
+              },
             ]}
             isMobile={true}
           />
