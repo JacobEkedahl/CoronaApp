@@ -41,7 +41,7 @@ const UpdateComponent = React.lazy(() =>
 );
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAtmYK_5Wvl6pvzEu5BwuUWqi3kg1awLng",
+  apiKey: "AIzaSyCoQ3_RzaLw6Kqh8PIcN-wr2tDwKCTQ_1w",
   authDomain: "corona-live-updates.firebaseapp.com",
   databaseURL: "https://corona-live-updates.firebaseio.com",
   projectId: "corona-live-updates",

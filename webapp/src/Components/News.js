@@ -1,20 +1,27 @@
 import React, { useEffect, useState } from "react";
+import Parser from "rss-parser";
 import CardElement from "./CardElement";
+import Loader from "./Loader";
 import "./News.css";
-let Parser = require("rss-parser");
-let parser = new Parser();
 
+const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
 const url =
   "https://www.folkhalsomyndigheten.se/nyheter-och-press/nyhetsarkiv/?topic=smittskydd-och-sjukdomar&syndication=rss";
 
 const News = () => {
   const [articles, setArticles] = useState(null);
+  const hasChanged = !!articles ? articles.length : 0;
 
   useEffect(() => {
-    parser.parseURL(url).then((articles) => {
+    const parser = new Parser();
+    parser.parseURL(CORS_PROXY + url).then((articles) => {
       setArticles(articles.items);
     });
-  }, []);
+  }, [hasChanged]);
+
+  if (articles === null) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -28,15 +35,13 @@ const News = () => {
         />
         Folkhälsomyndigheten
       </h2>
-      {!!articles && (
-        <ul className="newsComponent">
-          {articles.map((article) => (
-            <li>
-              <CardElement article={article} />
-            </li>
-          ))}
-        </ul>
-      )}
+      <ul className="newsComponent">
+        {articles.map((article) => (
+          <li>
+            <CardElement article={article} />
+          </li>
+        ))}
+      </ul>
     </>
   );
 };
