@@ -6,7 +6,6 @@ import React from "react";
 import "./CardElement.css";
 
 export default function CardElement({ article }) {
-  console.log(article);
   const pubDate = new Date(article.pubDate);
 
   return (

@@ -2,7 +2,7 @@ import { cloneDeep } from "lodash";
 import { LATEST_INIT, LATEST_MODIFIED } from "../actions/firestoreActions";
 import {
   DONT_SHOW_NOTIFICATIONS,
-  LOAD_ANIMATED
+  LOAD_ANIMATED,
 } from "../actions/tableActions";
 
 const getDifferenceTwoString = (numberA, numberB) => {
@@ -18,7 +18,7 @@ const latest = (
     lastUpdated: null,
     hasLoaded: false,
     canShowNotification: true,
-    total: null
+    total: null,
   },
   action
 ) => {
@@ -26,17 +26,17 @@ const latest = (
     case DONT_SHOW_NOTIFICATIONS:
       return {
         ...state,
-        canShowNotification: false
+        canShowNotification: false,
       };
     case LOAD_ANIMATED:
       if (state.toBeAnimated.length === 0) {
         return {
           ...state,
           data: {
-            allValues: state.data.allValues,
-            newValue: null
+            allValues: state.data?.allValues,
+            newValue: null,
           },
-          canShowNotification: false
+          canShowNotification: false,
         };
       }
 
@@ -67,17 +67,17 @@ const latest = (
 
       const updatedData = {
         ...(diffCases !== 0 && {
-          cases: diffCases
+          cases: diffCases,
         }),
         ...(diffDeaths !== 0 && {
-          deaths: diffDeaths
+          deaths: diffDeaths,
         }),
         ...(diffCritical !== 0 && {
-          critical: diffCritical
+          critical: diffCritical,
         }),
         ...(diffRecovered !== 0 && {
-          recovered: diffRecovered
-        })
+          recovered: diffRecovered,
+        }),
       };
 
       return {
@@ -86,16 +86,16 @@ const latest = (
         toBeAnimated: oldToBeAnimated,
         data: {
           allValues: newLatest,
-          newValue: { country: nextToBeAnimated.country, ...updatedData }
+          newValue: { country: nextToBeAnimated.country, ...updatedData },
         },
-        canShowNotification: true
+        canShowNotification: true,
       };
 
     case LATEST_MODIFIED:
       if (action.meta.doc === "Total") {
         return {
           ...state,
-          total: { ...action.payload.data }
+          total: { ...action.payload.data },
         };
       }
       return {
@@ -108,10 +108,10 @@ const latest = (
           {
             country: action.meta.doc,
             data: {
-              ...action.payload.data
-            }
-          }
-        ]
+              ...action.payload.data,
+            },
+          },
+        ],
       };
     case LATEST_INIT:
       const collection = action.meta.collection;
@@ -126,7 +126,7 @@ const latest = (
         ...state,
         data: { allValues: incomingPayload, newValue: null },
         hasLoaded: true,
-        total: total
+        total: total,
       };
 
     default:
@@ -134,22 +134,23 @@ const latest = (
   }
 };
 
-const canUpdate = oldDate => {
+const canUpdate = (oldDate) => {
   return oldDate === null || Date.now() - oldDate > 5000;
 };
 
 export default latest;
 
-export const getCanShowNotification = state => state.latest.canShowNotification;
-export const getHasLoaded = state => state.latest.hasLoaded;
-export const getLatestUpdated = state => state.latest.lastUpdated;
-export const getCountriesToBeAnimated = state => state.latest.toBeAnimated;
-export const getLatestValues = state => state.latest.data;
-export const getAllValues = state => state.latest.data?.allValues;
-export const getNewValue = state => state.latest.data?.newValue;
-export const getTransformedValues = state => {
+export const getCanShowNotification = (state) =>
+  state.latest.canShowNotification;
+export const getHasLoaded = (state) => state.latest.hasLoaded;
+export const getLatestUpdated = (state) => state.latest.lastUpdated;
+export const getCountriesToBeAnimated = (state) => state.latest.toBeAnimated;
+export const getLatestValues = (state) => state.latest.data;
+export const getAllValues = (state) => state.latest.data?.allValues;
+export const getNewValue = (state) => state.latest.data?.newValue;
+export const getTransformedValues = (state) => {
   const data = getAllValues(state);
-  const countriesWithInfo = Object.keys(data).map(key => {
+  const countriesWithInfo = Object.keys(data).map((key) => {
     const cases = data[key].cases || "0";
     const deaths = data[key].deaths || "0";
     const critical = data[key].critical || "0";
@@ -160,11 +161,11 @@ export const getTransformedValues = state => {
       cases: cases,
       deaths: deaths,
       critical: critical,
-      recovered: recovered
+      recovered: recovered,
     };
   });
 
-  countriesWithInfo.sort(function(a, b) {
+  countriesWithInfo.sort(function (a, b) {
     const numberB = b.cases.replace(/[ ,.]/g, "");
     const numberA = a.cases.replace(/[ ,.]/g, "");
     return numberB - numberA;
@@ -173,29 +174,53 @@ export const getTransformedValues = state => {
   return countriesWithInfo;
 };
 
+const canAddAdditional = (additional, lastEntry) =>
+  additional.cases !== lastEntry.cases ||
+  additional.critical !== lastEntry.critical ||
+  additional.deaths !== lastEntry.deaths ||
+  additional.recovered !== lastEntry.recovered;
+
 //history
-export const getSelectedHistory = state => {
-  const tempHistory = state.firestore.ordered?.selectedHistory;
-  if (!tempHistory) return [];
-  const sorted = tempHistory.slice().sort((a, b) => {
+export const getSelectedHistory = (state) => {
+  const beforeAdditional = state.firestore.ordered?.selectedHistory;
+  if (!beforeAdditional || beforeAdditional.length === 0) return [];
+
+  const latestForThisCountry =
+    state.firestore.data.latestValues[beforeAdditional[0]?.country];
+
+  const sorted = beforeAdditional.slice().sort((a, b) => {
     return new Date(a.time.seconds) - new Date(b.time.seconds);
   });
-  return sorted.map(entry => ({
+
+  const additional = {
+    ...latestForThisCountry,
+    country: beforeAdditional[0].country,
+    time: { seconds: new Date().getTime() / 1000, nanoseconds: 0 },
+  };
+
+  const extendedHistory = canAddAdditional(
+    additional,
+    sorted[sorted.length - 1]
+  )
+    ? [...sorted, additional]
+    : sorted;
+
+  return extendedHistory.map((entry) => ({
     cases: convertToInt(entry.cases),
     ...(convertToInt(entry.deaths) !== 0 && {
-      deaths: convertToInt(entry.deaths)
+      deaths: convertToInt(entry.deaths),
     }),
     ...(convertToInt(entry.critical) !== 0 && {
-      critical: convertToInt(entry.critical)
+      critical: convertToInt(entry.critical),
     }),
     ...(convertToInt(entry.recovered) !== 0 && {
-      recovered: convertToInt(entry.recovered)
+      recovered: convertToInt(entry.recovered),
     }),
-    date: entry.time.seconds
+    date: entry.time.seconds,
   }));
 };
 
-const convertToInt = entry => {
+const convertToInt = (entry) => {
   if (!entry) {
     return 0;
   }

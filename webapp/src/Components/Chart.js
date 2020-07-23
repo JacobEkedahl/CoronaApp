@@ -6,10 +6,14 @@ import { useParams } from "react-router";
 import { useAnalytics } from "reactfire";
 import { Legend, Line, Tooltip, XAxis, YAxis } from "recharts";
 import { SelectContent } from "../actions/analyticsActions";
-import { TOGGLE_CHART } from "../actions/tableActions";
+import {
+  SELECT_INFORMATION_SHOWN,
+  TOGGLE_CHART,
+} from "../actions/tableActions";
 import { getSelectedHistory } from "../reducers/latestValues";
 import {
   getCanShowChart,
+  getChartInformationShown,
   getChartScope,
   getIsMinimized,
 } from "../reducers/tableReducer";
@@ -25,12 +29,11 @@ const LineChart = React.lazy(() => import("recharts/lib/chart/LineChart"));
 const ResponsiveContainer = React.lazy(() =>
   import("recharts/lib/component/ResponsiveContainer")
 );
-const ReferenceLine = React.lazy(() =>
-  import("recharts/lib/cartesian/ReferenceLine")
-);
 const ChartScope = React.lazy(() => import("./ChartScope"));
 
 const myProjectsReduxName = "selectedHistory";
+
+const NUMBER_OF_ENTRIES = 30;
 
 const ChartElement = ({
   dispatch,
@@ -38,10 +41,12 @@ const ChartElement = ({
   selectedHistory,
   canShow,
   scope,
+  shownInformation,
 }) => {
   const analytics = useAnalytics();
   let { country } = useParams();
   country = !!country ? country : "Total";
+
   useFirestoreConnect({
     collection: "history",
     where: ["country", "==", country],
@@ -93,33 +98,39 @@ const ChartElement = ({
             </div>
             <ResponsiveContainer>
               <LineChart
-                data={filterOutData(selectedHistory, scope)}
+                data={filterOutData(selectedHistory, scope, shownInformation)}
                 margin={{ bottom: 20 }}
               >
                 <Line
                   type="monotone"
                   dataKey="cases"
                   stroke="#1682C0"
-                  dot={false}
+                  dot={true}
                 />
-                <Line
-                  type="monotone"
-                  dataKey="deaths"
-                  stroke="#D9190E"
-                  dot={false}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="critical"
-                  stroke="#EBE309"
-                  dot={false}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="recovered"
-                  stroke="#00FF00"
-                  dot={false}
-                />
+                {shownInformation.deaths && (
+                  <Line
+                    type="monotone"
+                    dataKey="deaths"
+                    stroke="#D9190E"
+                    dot={true}
+                  />
+                )}
+                {shownInformation.critical && (
+                  <Line
+                    type="monotone"
+                    dataKey="critical"
+                    stroke="#EBE309"
+                    dot={true}
+                  />
+                )}
+                {shownInformation.recovered && (
+                  <Line
+                    type="monotone"
+                    dataKey="recovered"
+                    stroke="#00FF00"
+                    dot={true}
+                  />
+                )}
                 <XAxis
                   dataKey="date"
                   type="number"
@@ -128,8 +139,24 @@ const ChartElement = ({
                   allowDuplicatedCategory={false}
                   padding={{ right: 25 }}
                 />
-                <YAxis />
-                <Legend />
+                <YAxis
+                  tickFormatter={(value) =>
+                    Intl.NumberFormat("en-US", {
+                      notation: "compact",
+                      compactDisplay: "short",
+                    }).format(value)
+                  }
+                />
+                <Legend
+                  inactive={true}
+                  onClick={(e) => {
+                    const key = e.dataKey;
+                    dispatch({
+                      type: SELECT_INFORMATION_SHOWN,
+                      payload: { [key]: !shownInformation[key] },
+                    });
+                  }}
+                />
                 <Tooltip
                   labelFormatter={formatLabel}
                   contentStyle={customStyle}
@@ -137,13 +164,6 @@ const ChartElement = ({
                     new Intl.NumberFormat("en").format(value)
                   }
                 />
-
-                <ReferenceLine x="1583064000" stroke="rgba(187,225,250,0.3)" />
-                <ReferenceLine x="1580558400" stroke="rgba(187,225,250,0.3)" />
-                <ReferenceLine x="1585742400" stroke="rgba(187,225,250,0.3)" />
-                <ReferenceLine x="1588334400" stroke="rgba(187,225,250,0.3)" />
-                <ReferenceLine x="1591012800" stroke="rgba(187,225,250,0.3)" />
-                <ReferenceLine x="1593604800" stroke="rgba(187,225,250,0.3)" />
               </LineChart>
             </ResponsiveContainer>
           </Suspense>
@@ -195,20 +215,74 @@ const getMinTime = (scope) => {
   }
 };
 
-const filterOutData = (selectedHistory, scope) => {
+const convertHistory = (history) => {
+  if (!history || history.length < NUMBER_OF_ENTRIES) {
+    return history;
+  }
+
+  const result = [];
+  const acutalNumberOfEntries = NUMBER_OF_ENTRIES - 2;
+  const startTime = history[0].date;
+  const endTime = history[history.length - 1].date;
+  const spacing = (endTime - startTime) / acutalNumberOfEntries;
+  var target = startTime + spacing;
+
+  for (var i = 1; i < history.length - 1; i++) {
+    const curr = history[i];
+    if (curr.date + spacing > endTime) break;
+
+    if (curr.date > target) {
+      result.push(curr);
+      while (target < curr.date) {
+        target += spacing;
+      }
+    }
+  }
+
+  result.push(history[history.length - 1]);
+  return result;
+};
+
+const filterOutData = (selectedHistory, scope, shownInformation) => {
   var d = new Date();
+
+  let newHistory = null;
   switch (scope) {
     case "1W":
       d.setDate(d.getDate() - 7);
       d.setHours(0, 0, 0);
-      return filterData(selectedHistory, d / 1000);
+      newHistory = convertHistory(filterData(selectedHistory, d / 1000));
+      break;
     case "1M":
       d.setMonth(d.getMonth() - 1);
       d.setHours(0, 0, 0);
-      return filterData(selectedHistory, d / 1000);
+      newHistory = convertHistory(filterData(selectedHistory, d / 1000));
+      break;
     default:
-      return selectedHistory;
+      newHistory = convertHistory(selectedHistory);
   }
+
+  const attributesToBeRemoved = getAttributesToBeRemoved(shownInformation);
+  if (attributesToBeRemoved.length > 0) {
+  }
+  newHistory.map((h) => {
+    attributesToBeRemoved.forEach((key) => {
+      delete h[key];
+    });
+
+    return h;
+  });
+
+  return newHistory;
+};
+
+const getAttributesToBeRemoved = (shownInformation) => {
+  const result = [];
+  Object.keys(shownInformation).forEach((key) => {
+    if (!shownInformation[key]) result.push(key);
+  });
+
+  return result;
 };
 
 const filterData = (selectedHistory, timeLimitSeconds) =>
@@ -231,7 +305,30 @@ function formatXAxis(tickItem) {
 
 function formatLabel(seconds) {
   const t = convertToDate(seconds);
-  return t.toISOString().substring(0, 10) + " (" + t.toLocaleTimeString() + ")";
+  return (
+    t.toISOString().substring(0, 10) +
+    " (" +
+    timeConversion(t.toLocaleTimeString()) +
+    ")"
+  );
+}
+
+function timeConversion(s) {
+  const isPM = s.indexOf("PM") !== -1;
+  let [hours, minutes] = s.replace(isPM ? "PM" : "AM", "").split(":");
+
+  if (isPM) {
+    hours = parseInt(hours, 10) + 12;
+    hours = hours === 24 ? 12 : hours;
+  } else {
+    hours = parseInt(hours, 10);
+    hours = hours === 12 ? 0 : hours;
+    if (String(hours).length === 1) hours = "0" + hours;
+  }
+
+  const time = [hours, minutes].join(":");
+
+  return time;
 }
 
 function convertToDate(tickItem) {
@@ -245,4 +342,5 @@ export default connect((state) => ({
   selectedHistory: getSelectedHistory(state),
   canShow: getCanShowChart(state),
   scope: getChartScope(state),
+  shownInformation: getChartInformationShown(state),
 }))(ChartElement);

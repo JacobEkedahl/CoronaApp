@@ -1,9 +1,9 @@
 const cheerio = require("cheerio");
 const cheerioTableparser = require("cheerio-tableparser");
 const siteUrl = "https://www.worldometers.info/coronavirus/#countries";
-const webhookUrl =
-  "https://discordapp.com/api/webhooks/688444307598082072/5xRtv3WSub2jE7np1RMdNh18xLBUnRHHAJce1fqLLqJSy51dA5vriAmLYEkbSXDSc6wf";
+const functions = require("firebase-functions");
 const axios = require("axios");
+const webhookUrl = functions.config().discordmain.url;
 
 exports.constructCountryInfo = async (tableData) => {
   const totalCountries = [];
@@ -11,8 +11,16 @@ exports.constructCountryInfo = async (tableData) => {
   const totalDeath = [];
   const totalSerious = [];
   const totalRecoveries = [];
-  const excludedCountries = [];
   const excludeCountriesNames = [];
+  const forbidden = [
+    "North America",
+    "South America",
+    "Asia",
+    "Europe",
+    "Africa",
+    "Oceania",
+    "",
+  ];
 
   tableData.forEach((column) => {
     const title = column[0];
@@ -59,8 +67,18 @@ exports.constructCountryInfo = async (tableData) => {
     }
   });
 
+  let hasHadTotal = false;
   const result = [];
   for (index = 0; index < totalCountries.length; index++) {
+    if (
+      forbidden.includes(totalCountries[index]) ||
+      (hasHadTotal && totalCountries[index] === "Total")
+    ) {
+      continue;
+    }
+
+    if (totalCountries[index] === "Total") hasHadTotal = true;
+
     result.push({
       country: totalCountries[index],
       cases: totalCases[index],
@@ -85,6 +103,17 @@ exports.fetchData = async () => {
   const $ = cheerio.load(result.data);
   cheerioTableparser($);
   return $("#main_table_countries_today").parsetable(true, true, true);
+};
+
+exports.createDate = (adminTime) => {
+  const convertedDate = new Date(adminTime.seconds * 1000);
+  return (
+    convertedDate.getFullYear() +
+    "-" +
+    (convertedDate.getMonth() + 1) +
+    "-" +
+    convertedDate.getDate()
+  );
 };
 
 const countries = {
